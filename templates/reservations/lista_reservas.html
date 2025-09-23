@@ -1,0 +1,38 @@
+<h2>Listado de Reservas</h2>
+<table border="1" cellpadding="5" cellspacing="0">
+  <tr>
+    <th>ID</th>
+    <th>Cliente</th>
+    <th>Mesa</th>
+    <th>Fecha</th>
+    <th>Hora</th>
+    <th>Personas</th>
+    <th>Estado</th>
+    <th>Acciones</th>
+  </tr>
+  {% for reserva in reservas %}
+  <tr>
+    <td>{{ reserva.id }}</td>
+    <td>{{ reserva.cliente.username }}</td>
+    <td>Mesa {{ reserva.mesa.numero }}</td>
+    <td>{{ reserva.fecha }}</td>
+    <td>{{ reserva.hora }}</td>
+    <td>{{ reserva.personas }}</td>
+    <td>{{ reserva.estado }}</td>
+    <td>
+      {% if reserva.estado == "activa" %}
+        <a href="{% url 'cancelar_reserva' reserva.id %}">Cancelar</a>
+      {% else %}
+        -
+      {% endif %}
+    </td>
+  </tr>
+  {% empty %}
+  <tr>
+    <td colspan="8">No hay reservas registradas.</td>
+  </tr>
+  {% endfor %}
+</table>
+
+<br>
+<a href="{% url 'crear_reserva' %}">➕ Nueva Reserva</a>

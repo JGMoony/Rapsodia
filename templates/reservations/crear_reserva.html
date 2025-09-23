@@ -1,0 +1,6 @@
+<h2>Nueva Reserva</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" name="preconfirmar">Continuar</button>
+</form>
