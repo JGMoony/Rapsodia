@@ -39,10 +39,8 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_URL = "/login/"
 LOGIN_REDIRECT_URL = '/'
-ACCOUNT_EMAIL_REQUIRED = True
-ACCOUNT_USERNAME_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'email'
-ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_SIGNUP_FIELDS = ["username*", "email*", "password1*", "password2*"]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
