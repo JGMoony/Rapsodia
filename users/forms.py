@@ -4,7 +4,7 @@ from .models import User
 import re
 
 class RegistroForm(UserCreationForm):
-    correo = forms.EmailField(required=True)
+    email = forms.EmailField(required=True)
     nombre = forms.CharField(max_length=100)
     apellido = forms.CharField(max_length=100)
     password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
@@ -12,7 +12,7 @@ class RegistroForm(UserCreationForm):
 
     class Meta:
         model = User
-        fields = ['correo', 'nombre', 'apellido', 'password1', 'password2']
+        fields = ['email', 'nombre', 'apellido', 'password1', 'password2']
 
     def clean_password1(self):
         password = self.cleaned_data.get('password1')

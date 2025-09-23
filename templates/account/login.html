@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es-co">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <style>
+        *{
+            margin:0;
+            padding:0;
+            font-family:Arial, Helvetica, sans-serif;
+            color:#fff;
+        }
+
+        body{
+            width:100vw;
+            height:100vh;
+            background:#081b29;
+            display:grid;
+            justify-content:center;
+            align-content:center;
+        }
+
+        ::-webkit-input-placeholder{
+            color:#eee;
+        }
+        
+        .wrapper{
+            position:relative;
+            width:800px;
+            height:65vh;
+            display:grid;
+            grid-template-columns:1fr 1fr;
+            border:3px solid #00ffff;
+            box-shadow:0 0 50px 0 #00a6bc;
+        }
+
+        .form{
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:center;
+        }
+
+        .title{
+            font-size:35px;
+        }
+
+        .inp{
+            padding-bottom:10px;
+            border-bottom:2px solid #eee;
+        }
+
+        .input{
+            border:none;
+            outline:none;
+            background:none;
+            width:260px;
+            margin-top:40px;
+            padding-right:10px;
+            font-size:17px;
+            color:#0ef;
+        }
+
+        .Submit{
+            border:none;
+            outline:none;
+            width:288px;
+            margin-top:25px;
+            padding:10px 0;
+            font-size:20px;
+            border-radius:40px;
+            letter-spacing:1px;
+            cursor:pointer;
+            background:linear-gradient(45deg,#0ef,#3a30fa);
+        }
+
+        .social{
+            margin-top:30px;
+            display:flex;
+        }
+
+        .social div{
+            width:120px;
+            border-radius:5px;
+            padding:2px 3px 2px 6px;
+            background-color:#1630dc;
+            color:#eee;
+            cursor:pointer;
+            display:flex;
+            align-items:center;
+            margin-right:8px;
+        }
+
+        .social div:hover{
+            background-color:#2ac3ffce;
+        }
+
+        .logo{
+            padding-top:8px;
+            margin-right:15px;
+            margin-bottom:10px;
+            width:22px;
+            align-items:center;
+            display:flex;
+        }
+
+        .footer{
+            margin-top:10px;
+            letter-spacing:0.5px;
+            font-size:14px;
+        }
+
+        .link{
+            color:#0ef;
+            text-decoration:none;
+        }
+
+        .links{
+            color:#0ef;
+            text-decoration:none;
+            font-size:10px;
+            align-self:center;
+        }
+
+        .banner{
+            position:absolute;
+            top:0;
+            right:0;
+            width:450px;
+            height:100%;
+            background:linear-gradient(to right,#0ef,#3a30fa);
+            clip-path:polygon(0 0,100% 0,100% 100%,60% 100%);
+            padding-right:70px;
+            text-align:right;
+            display:flex;
+            flex-direction:column;
+            justify-content:center;
+            align-items:flex-end;
+        }
+
+        .wel_text{
+            font-size:40px;
+            margin-top:-50px;
+            line-height:50px;
+        }
+
+        .sub_wel{
+            margin-top:10px;
+            font-size:18px;
+            line-height:24px;
+            letter-spacing:1px;
+        }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <form method="POST" class="form">
+            {% csrf_token %}
+            <h1 class="title">Inicio</h1>
+            {{ form.email }}
+            {{ form.password }}
+            {% if form.errors %}
+                <div style="color: red; margin-top: 10px;">
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+            <button class="Submit" type="submit">Iniciar sesión</button>
+        </form>
+        <div class="banner">
+            <h1 class="wel_text">BIENVENIDO DE VUELTA</h1>
+            <p class="sub_wel">¡Nos da gusto verte!</p>
+        </div>
+    </div>
+</body>
+</html>

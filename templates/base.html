@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es-co">
+<head>
+    <meta charset="UTF-8">
+    <title>Bienvenida</title>
+    <style>
+        body {
+            background: linear-gradient(to right, #3a30fa, #0ef);
+            font-family: Arial, sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        p {
+            font-size: 20px;
+        }
+        a {
+            color: #fff;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¡Bienvenido a Rapsodia!</h1>
+        <p>Tu sesión ha iniciado correctamente.</p>
+        <p><a href="{% url 'logout' %}">Cerrar sesión</a></p>
+    </div>
+</body>
+</html>
