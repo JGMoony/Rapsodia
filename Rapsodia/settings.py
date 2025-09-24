@@ -50,6 +50,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
+
 ]
 
 LOGIN_URL = '/users/login/'
@@ -106,7 +108,7 @@ EMAIL_HOST_PASSWORD = 'DarknessJ20'
 
 
 LANGUAGE_CODE = 'es'
-TIME_ZONE = 'America/Bogotá'
+TIME_ZONE = 'America/Bogota'
 USE_I18N = True
 USE_TZ = True
 

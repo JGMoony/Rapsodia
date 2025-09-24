@@ -1,0 +1,27 @@
+<h2>Consultar disponibilidad de mesas</h2>
+
+<form method="get" action="">
+    <label for="date">Fecha:</label>
+    <input type="date" id="date" name="date" required>
+
+    <label for="time">Hora:</label>
+    <input type="time" id="time" name="time" required>
+
+    <button type="submit">Buscar</button>
+</form>
+
+<hr>
+
+{% if date and time %}
+    <h3>Resultados para {{ date }} a las {{ time }}</h3>
+
+    {% if available_tables %}
+        <ul>
+            {% for mesa in available_tables %}
+                <li>Mesa {{ mesa.numero }} (capacidad: {{ mesa.capacidad }})</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay mesas disponibles.</p>
+    {% endif %}
+{% endif %}
