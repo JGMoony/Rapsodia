@@ -22,6 +22,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     apellido = models.CharField(max_length=100)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    role = models.CharField(max_length=50, choices=[('cliente', 'Cliente'), ('admin', 'Administrador')],
+        default='cliente',
+        editable=True
+)
 
     objects = UserManager()
 

@@ -8,14 +8,14 @@
         *{
             margin:0;
             padding:0;
-            font-family:Arial, Helvetica, sans-serif;
+            font-family:"OV Treasure", serif;
             color:#fff;
         }
 
         body{
             width:100vw;
             height:100vh;
-            background:#081b29;
+            background:#ccbf96;
             display:grid;
             justify-content:center;
             align-content:center;
@@ -31,8 +31,8 @@
             height:65vh;
             display:grid;
             grid-template-columns:1fr 1fr;
-            border:3px solid #00ffff;
-            box-shadow:0 0 50px 0 #00a6bc;
+            border:3px solid #920707ff;
+            box-shadow:0 0 50px 0 #ec2424ff;
         }
 
         .form{
@@ -59,7 +59,7 @@
             margin-top:40px;
             padding-right:10px;
             font-size:17px;
-            color:#0ef;
+            color:rgba(157, 20, 20, 1);
         }
 
         .Submit{
@@ -72,7 +72,7 @@
             border-radius:40px;
             letter-spacing:1px;
             cursor:pointer;
-            background:linear-gradient(45deg,#0ef,#3a30fa);
+            background:linear-gradient(45deg,rgba(173, 15, 15, 1),#5f0606);
         }
 
         .social{
@@ -84,7 +84,7 @@
             width:120px;
             border-radius:5px;
             padding:2px 3px 2px 6px;
-            background-color:#1630dc;
+            background-color:rgba(173, 15, 15, 1);
             color:#eee;
             cursor:pointer;
             display:flex;
@@ -93,7 +93,7 @@
         }
 
         .social div:hover{
-            background-color:#2ac3ffce;
+            background-color:#6a00ff;
         }
 
         .logo{
@@ -112,12 +112,12 @@
         }
 
         .link{
-            color:#0ef;
+            color:rgba(23, 15, 138, 1);
             text-decoration:none;
         }
 
         .links{
-            color:#0ef;
+            color:#920707ff;
             text-decoration:none;
             font-size:10px;
             align-self:center;
@@ -129,7 +129,7 @@
             right:0;
             width:450px;
             height:100%;
-            background:linear-gradient(to right,#0ef,#3a30fa);
+            background:linear-gradient(to right,rgba(90, 24, 17, 1),#5f0606);
             clip-path:polygon(0 0,100% 0,100% 100%,60% 100%);
             padding-right:70px;
             text-align:right;
@@ -151,15 +151,39 @@
             line-height:24px;
             letter-spacing:1px;
         }
+
+        .regs_text{
+            font-size:38px;
+            margin-top:-50px;
+            line-height:50px;
+        }
+
+        .sub_regs{
+            margin-top:10px;
+            font-size:15px;
+            line-height:20px;
+            letter-spacing:1px;
+        }
+        input, textarea, select {
+            color: #222;
+        }
     </style>
 </head>
 <body>
     <div class="wrapper">
-        <form method="POST" class="form">
+        <form method="POST" action="{% url 'login' %}" class="form">
             {% csrf_token %}
             <h1 class="title">Inicio</h1>
-            {{ form.email }}
-            {{ form.password }}
+
+            <div class="inp">
+                {{ form.email.label_tag }}
+                {{ form.email}}
+            </div>
+            <div class="inp">
+                {{ form.password.label_tag }}
+                {{ form.password }}
+            </div>
+
             {% if form.errors %}
                 <div style="color: red; margin-top: 10px;">
                     {% for field in form %}
@@ -169,8 +193,12 @@
                     {% endfor %}
                 </div>
             {% endif %}
+
             <button class="Submit" type="submit">Iniciar sesión</button>
+            <a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
+            <a class="links" href="{% url 'register' %}">¿No tienes una cuenta? Regístrate</a>
         </form>
+
         <div class="banner">
             <h1 class="wel_text">BIENVENIDO DE VUELTA</h1>
             <p class="sub_wel">¡Nos da gusto verte!</p>

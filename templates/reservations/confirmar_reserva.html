@@ -1,0 +1,11 @@
+<h2>Confirmar Reserva</h2>
+<p><b>Fecha:</b> {{ datos.fecha }}</p>
+<p><b>Hora:</b> {{ datos.hora }}</p>
+<p><b>Cantidad de personas:</b> {{ datos.personas }}</p>
+
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" name="confirmar">Confirmar</button>
+  <a href="{% url 'crear_reserva' %}">Cancelar</a>
+</form>
