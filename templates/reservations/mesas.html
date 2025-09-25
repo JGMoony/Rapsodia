@@ -1,0 +1,13 @@
+<h1>Listado de Mesas</h1>
+<ul>
+    {% for mesa in mesas %}
+        <li>
+            Mesa {{ mesa.numero }} - Capacidad: {{ mesa.capacidad }} - 
+            {% if mesa.disponible %}
+                ✅ Disponible
+            {% else %}
+                ❌ Ocupada
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>

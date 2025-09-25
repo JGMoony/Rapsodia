@@ -6,11 +6,12 @@ from datetime import datetime, timedelta
 
 class Mesa(models.Model):
     numero = models.IntegerField(unique=True)
-    capacidad = models.IntegerField()
+    capacidad = models.IntegerField(default=6)  # cada mesa soporta hasta 6 personas
     disponible = models.BooleanField(default=True)
 
     def __str__(self):
-        return f"Mesa {self.numero} ({'Disponible' if self.disponible else 'Ocupada'})"
+        return f"Mesa {self.numero} (Capacidad: {self.capacidad})"
+
 
 class Reserva(models.Model):
     cliente = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)

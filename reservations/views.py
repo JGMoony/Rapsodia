@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .forms import ReservaForm
-from .models import Reserva
+from .models import Mesa, Reserva
 
 @login_required
 def crear_reserva(request):
@@ -13,7 +13,7 @@ def crear_reserva(request):
                 try:
                     form.save()
                     messages.success(request, "Reserva confirmada con éxito.")
-                    return redirect("lista_reservas")  # Debes definir esta vista
+                    return redirect("lista_reservas")
                 except Exception as e:
                     messages.error(request, str(e))
             return render(request, "reservations/crear_reserva.html", {"form": form})
@@ -37,3 +37,28 @@ def cancelar_reserva(request, reserva_id):
     reserva.estado = "cancelada"
     reserva.save()
     return redirect("lista_reservas")
+
+def check_availability(request):
+    date = request.GET.get('date')
+    time = request.GET.get('time')
+
+    available_tables = []
+
+    if date and time:
+        reserved_tables = Reserva.objects.filter(
+            fecha=date,
+            hora=time
+        ).values_list('mesa_id', flat=True)
+
+        available_tables = Mesa.objects.exclude(id__in=reserved_tables)
+
+    return render(request, 'reservations/availability.html', {
+        'available_tables': available_tables,
+        'date': date,
+        'time': time,
+    })
+
+
+def lista_mesas(request):
+    mesas = Mesa.objects.all()
+    return render(request, 'reservations/mesas.html', {'mesas': mesas})
