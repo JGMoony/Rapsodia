@@ -1,27 +1,150 @@
-<h2>Consultar disponibilidad de mesas</h2>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-co">
+<head>
+    <meta charset="UTF-8">
+    <title>Disponibilidad</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
 
-<form method="get" action="">
-    <label for="date">Fecha:</label>
-    <input type="date" id="date" name="date" required>
+        body {
+            font-family: "OV Treasure", serif;
+            background-color: #e6ddbc;
+            color: #262525;
+            padding: 2rem;
+        }
 
-    <label for="time">Hora:</label>
-    <input type="time" id="time" name="time" required>
+        h2 {
+            margin-top: 2rem;
+            color: #822626;
+        }
 
-    <button type="submit">Buscar</button>
+        form {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 0.6rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: #822626;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: #690202;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+        }
+
+        th, td {
+            padding: 0.8rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #e6ddbc;
+            color: #262525;
+        }
+
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        .alert-success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 2rem;
+        }
+        input[type="date"] {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 0.6rem;
+            font-family: "OV Treasure", serif;
+            color: #262525;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>Consultar Disponibilidad de Mesas</h1>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" name="consultar">Consultar Disponibilidad</button>
 </form>
 
-<hr>
-
-{% if date and time %}
-    <h3>Resultados para {{ date }} a las {{ time }}</h3>
-
-    {% if available_tables %}
-        <ul>
-            {% for mesa in available_tables %}
-                <li>Mesa {{ mesa.numero }} (capacidad: {{ mesa.capacidad }})</li>
-            {% endfor %}
-        </ul>
+{% if mesas_disponibles %}
+    <h2>Mesas Disponibles para {{ fecha }} a las {{ hora }} ({{ personas }} personas)</h2>
+    
+    {% if mesas_disponibles %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Mesa #</th>
+                    <th>Capacidad</th>
+                    <th>Acción</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mesa in mesas_disponibles %}
+                    <tr>
+                        <td>{{ mesa.numero }}</td>
+                        <td>{{ mesa.capacidad }}</td>
+                        <td>
+                            <form method="post">
+                                {% csrf_token %}
+                                
+                                <input type="hidden" name="fecha" value="{{ fecha|date:'Y-m-d' }}">
+                                <input type="hidden" name="hora" value="{{ hora }}">
+                                <input type="hidden" name="personas" value="{{ personas }}">
+                                
+                                <input type="hidden" name="mesa_id" value="{{ mesa.id }}">
+                                
+                                <button type="submit" name="reservar" class="btn btn-success btn-sm">Reservar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     {% else %}
-        <p>No hay mesas disponibles.</p>
+        <p>No se encontraron mesas disponibles que cumplan con los requisitos.</p>
     {% endif %}
+
 {% endif %}
+
+{% if reserva_confirmada %}
+    <div class="alert alert-success">
+        <h3>Reserva Confirmada</h3>
+        <p>Cliente: {{ reserva_confirmada.cliente.nombre }}</p>
+        <p>Mesa: {{ reserva_confirmada.mesa.numero }} (Capacidad: {{ reserva_confirmada.mesa.capacidad }})</p>
+        <p>Fecha: {{ reserva_confirmada.fecha }}</p>
+        <p>Hora: {{ reserva_confirmada.hora }}</p>
+        <p>Personas: {{ reserva_confirmada.personas }}</p>
+    </div>
+{% endif %}
+    {{ block.super }}
+</body>
+</html>

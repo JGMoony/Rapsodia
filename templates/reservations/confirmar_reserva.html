@@ -1,11 +1,87 @@
-<h2>Confirmar Reserva</h2>
-<p><b>Fecha:</b> {{ datos.fecha }}</p>
-<p><b>Hora:</b> {{ datos.hora }}</p>
-<p><b>Cantidad de personas:</b> {{ datos.personas }}</p>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-co">
+<head>
+    <meta charset="UTF-8">
+    <title>Reserva</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
 
-<form method="post">
-  {% csrf_token %}
-  {{ form.as_p }}
-  <button type="submit" name="confirmar">Confirmar</button>
-  <a href="{% url 'crear_reserva' %}">Cancelar</a>
+        body {
+            font-family: "OV Treasure", serif;
+            background-color: #e6ddbc;
+            color: #262525;
+            padding: 2rem;
+        }
+
+        h2 {
+            margin-bottom: 1rem;
+            color: #822626;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: auto;
+        }
+
+        label {
+            font-weight: bold;
+            margin-top: 1rem;
+            display: block;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 0.6rem;
+            margin-top: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        button {
+            background-color: #822626;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 1.5rem;
+        }
+
+        button:hover {
+            background-color: #690202;
+        }
+    </style>
+</head>
+<body>
+    
+{% block content %}
+<h2>Confirmar reserva</h2>
+
+<ul>
+    <li>Fecha: {{ datos.fecha }}</li>
+    <li>Hora: {{ datos.hora }}</li>
+    <li>Mesa: {{ datos.mesa }}</li>
+    <li>Personas: {{ datos.personas }}</li>
+    <li>Cliente: {{ datos.cliente }}</li>
+</ul>
+
+<form method="POST">
+    {% csrf_token %}
+    <input type="hidden" name="mesa" value="{{ form.initial.mesa.id }}">
+    <input type="hidden" name="fecha" value="{{ form.initial.fecha }}">
+    <input type="hidden" name="hora" value="{{ form.initial.hora }}">
+    <input type="hidden" name="personas" value="{{ form.initial.personas }}">
+    <input type="hidden" name="cliente" value="{{ form.initial.cliente }}">
+    <button type="submit" name="confirmar">Confirmar</button>
+    <button type="submit" name="editar">Editar</button>
+    <a href="{% url 'disponibilidad_y_reserva' %}">Cancelar</a>
 </form>
+{% endblock %}
+
+    {{ block.super }}
+</body>
+</html>

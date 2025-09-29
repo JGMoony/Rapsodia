@@ -4,28 +4,46 @@
     <meta charset="UTF-8">
     <title>Bienvenida</title>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
+
         body {
-            background: linear-gradient(to right, #3a30fa, #0ef);
-            font-family: Arial, sans-serif;
-            color: white;
+            background-color: #e6ddbc;
+            font-family: "OV Treasure", serif;
+            color: #262525;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
             margin: 0;
         }
+
         .container {
             text-align: center;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
+
         h1 {
             font-size: 48px;
             margin-bottom: 20px;
+            color: #822626;
         }
+
         p {
             font-size: 20px;
+            color: #525252;
         }
+
         a {
-            color: #fff;
+            color: #822626;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        a:hover {
+            color: #690202;
             text-decoration: underline;
         }
     </style>
@@ -34,7 +52,8 @@
     <div class="container">
         <h1>¡Bienvenido a Rapsodia!</h1>
         <p>Tu sesión ha iniciado correctamente.</p>
-        <p><a href="{% url 'logout' %}">Cerrar sesión</a></p>
+        <p><a href="{% url 'crear_reserva' %}">Consultar disponibilidad de mesas</a></p>
+        <p><a href="{% url 'login' %}">Cerrar sesión</a></p>
     </div>
 </body>
 </html>

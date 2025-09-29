@@ -1,7 +1,6 @@
 from django.urls import path
 from . import views
 from django.contrib.auth import views as auth_views
-from django.http import HttpResponse
 
 urlpatterns = [
     path('password_reset/', auth_views.PasswordResetView.as_view(template_name='account/password_reset.html'), name='password_reset'),
@@ -11,12 +10,7 @@ urlpatterns = [
     path('register/', views.registro_view, name='register'),
     path('login/', views.login_view, name='login'),
     path('inicio', views.base_view, name='home'),
-]
-
-
-def test_view(request):
-    return HttpResponse("Sistema activo")
-
-urlpatterns += [
-    path('test/', test_view),
+    path('perfil/', views.perfil_usuario, name='perfil_usuario'),
+    path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
+    path('editar_reserva/<int:reserva_id>/', views.editar_reserva, name='editar_reserva'),
 ]

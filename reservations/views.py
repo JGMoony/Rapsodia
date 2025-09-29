@@ -1,64 +1,69 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
-from .forms import ReservaForm
+from django.contrib import messages
+from .forms import DisponibilidadForm
 from .models import Mesa, Reserva
 
-@login_required
-def crear_reserva(request):
+
+def disponibilidad_y_reserva(request):
+    form = DisponibilidadForm(request.POST or None)
+    mesas_disponibles = None
+    reserva_confirmada = None
+    fecha = hora = personas = None
+
     if request.method == "POST":
-        form = ReservaForm(request.POST)
-        if "confirmar" in request.POST:
-            if form.is_valid():
-                try:
-                    form.save()
-                    messages.success(request, "Reserva confirmada con éxito.")
-                    return redirect("lista_reservas")
-                except Exception as e:
-                    messages.error(request, str(e))
-            return render(request, "reservations/crear_reserva.html", {"form": form})
+        if "consultar" in request.POST and form.is_valid():
+            fecha = form.cleaned_data["fecha"]
+            hora = form.cleaned_data["hora"]
+            personas = form.cleaned_data["personas"]
 
-        elif form.is_valid():
-            datos = form.cleaned_data
-            return render(request, "reservations/confirmar_reserva.html", {"form": form, "datos": datos})
+            mesas_disponibles = Mesa.objects.filter(
+                capacidad__gte=personas
+            ).exclude(
+                reserva__fecha=fecha,
+                reserva__hora=hora,
+                reserva__estado="activa"
+            )
 
-    else:
-        form = ReservaForm()
-    return render(request, "reservations/crear_reserva.html", {"form": form})
+        elif "reservar" in request.POST:
+            mesa_id = request.POST.get("mesa_id")
+            mesa = get_object_or_404(Mesa, id=mesa_id)
+            
+            
+            reserva_confirmada = Reserva.objects.create( 
+                mesa=mesa, 
+                fecha=fecha,
+                hora=hora,
+                personas=personas,
+                cliente=cliente
+            )
+            messages.success(request, "Reserva creada exitosamente.")
+
+    return render(request, "reservations/availability.html", {
+        "form": form,
+        "mesas_disponibles": mesas_disponibles,
+        "reserva_confirmada": reserva_confirmada,
+        "fecha": fecha,
+        "hora": hora,
+        "personas": personas,
+    })
+
 
 @login_required
 def lista_reservas(request):
     reservas = Reserva.objects.all().order_by("-fecha", "-hora")
     return render(request, "reservations/lista_reservas.html", {"reservas": reservas})
 
+
 @login_required
 def cancelar_reserva(request, reserva_id):
     reserva = get_object_or_404(Reserva, id=reserva_id)
     reserva.estado = "cancelada"
     reserva.save()
+    messages.info(request, "Reserva cancelada.")
     return redirect("lista_reservas")
-
-def check_availability(request):
-    date = request.GET.get('date')
-    time = request.GET.get('time')
-
-    available_tables = []
-
-    if date and time:
-        reserved_tables = Reserva.objects.filter(
-            fecha=date,
-            hora=time
-        ).values_list('mesa_id', flat=True)
-
-        available_tables = Mesa.objects.exclude(id__in=reserved_tables)
-
-    return render(request, 'reservations/availability.html', {
-        'available_tables': available_tables,
-        'date': date,
-        'time': time,
-    })
 
 
 def lista_mesas(request):
     mesas = Mesa.objects.all()
-    return render(request, 'reservations/mesas.html', {'mesas': mesas})
+    return render(request, "reservations/mesas.html", {"mesas": mesas})

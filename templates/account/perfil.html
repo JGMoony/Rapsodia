@@ -1,0 +1,42 @@
+{% block content %}
+<h2>Mi perfil</h2>
+<a href="{% url 'editar_perfil' %}">Editar perfil</a>
+<a href="{% url 'seleccionar_mesa' %}">Nueva reserva</a>
+
+<h3>Historial de reservas</h3>
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Mesa</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Personas</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for reserva in reservas %}
+        <tr>
+            <td>{{ reserva.id }}</td>
+            <td>{{ reserva.mesa.numero }}</td>
+            <td>{{ reserva.fecha }}</td>
+            <td>{{ reserva.hora }}</td>
+            <td>{{ reserva.personas }}</td>
+            <td>{{ reserva.estado }}</td>
+            <td>
+                {% if reserva.estado == 'activa' %}
+                    <a href="{% url 'cancelar_reserva' reserva.id %}">Cancelar</a>
+                    <a href="{% url 'editar_reserva' reserva.id %}">Editar</a>
+                {% else %}
+                    —
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="7">No tienes reservas registradas.</td></tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

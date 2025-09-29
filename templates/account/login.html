@@ -1,208 +1,131 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es-co">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Iniciar Sesión</title>
     <style>
-        *{
-            margin:0;
-            padding:0;
-            font-family:"OV Treasure", serif;
-            color:#fff;
+        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: "OV Treasure", serif;
+            color: #262525;
         }
 
-        body{
-            width:100vw;
-            height:100vh;
-            background:#ccbf96;
-            display:grid;
-            justify-content:center;
-            align-content:center;
+        body {
+            background-color: #e6ddbc;
+            display: grid;
+            place-items: center;
+            height: 100vh;
         }
 
-        ::-webkit-input-placeholder{
-            color:#eee;
-        }
-        
-        .wrapper{
-            position:relative;
-            width:800px;
-            height:65vh;
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            border:3px solid #920707ff;
-            box-shadow:0 0 50px 0 #ec2424ff;
+        .wrapper {
+            width: 800px;
+            height: 75vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border: 3px solid #822626;
+            box-shadow: 0 0 30px #690202;
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
-        .form{
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
+        .form {
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
-        .title{
-            font-size:35px;
+        .title {
+            font-size: 32px;
+            color: #822626;
+            margin-bottom: 1rem;
         }
 
-        .inp{
-            padding-bottom:10px;
-            border-bottom:2px solid #eee;
+        input {
+            margin-top: 1rem;
+            padding: 0.6rem;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 1rem;
         }
 
-        .input{
-            border:none;
-            outline:none;
-            background:none;
-            width:260px;
-            margin-top:40px;
-            padding-right:10px;
-            font-size:17px;
-            color:rgba(157, 20, 20, 1);
+        .Submit {
+            background-color: #822626;
+            color: #fff;
+            border: none;
+            padding: 0.8rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-top: 1.5rem;
+            cursor: pointer;
         }
 
-        .Submit{
-            border:none;
-            outline:none;
-            width:288px;
-            margin-top:25px;
-            padding:10px 0;
-            font-size:20px;
-            border-radius:40px;
-            letter-spacing:1px;
-            cursor:pointer;
-            background:linear-gradient(45deg,rgba(173, 15, 15, 1),#5f0606);
+        .Submit:hover {
+            background-color: #690202;
         }
 
-        .social{
-            margin-top:30px;
-            display:flex;
+        .links {
+            margin-top: 1rem;
+            color: #822626;
+            text-decoration: none;
+            font-weight: bold;
         }
 
-        .social div{
-            width:120px;
-            border-radius:5px;
-            padding:2px 3px 2px 6px;
-            background-color:rgba(173, 15, 15, 1);
-            color:#eee;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            margin-right:8px;
+        .links:hover {
+            color: #690202;
         }
 
-        .social div:hover{
-            background-color:#6a00ff;
+        .banner {
+            width: 105%;
+            height: 100%;
+            background: linear-gradient(to right, #822626, #690202);
+            padding: 2rem;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-end;
+            text-align: right;
+            overflow-y: auto;
         }
 
-        .logo{
-            padding-top:8px;
-            margin-right:15px;
-            margin-bottom:10px;
-            width:22px;
-            align-items:center;
-            display:flex;
+        .regs_text {
+            font-size: 32px;
+            line-height: 1.2;
+            color: #e6ddbc;
+            margin-bottom: 1rem;
         }
 
-        .footer{
-            margin-top:10px;
-            letter-spacing:0.5px;
-            font-size:14px;
-        }
-
-        .link{
-            color:rgba(23, 15, 138, 1);
-            text-decoration:none;
-        }
-
-        .links{
-            color:#920707ff;
-            text-decoration:none;
-            font-size:10px;
-            align-self:center;
-        }
-
-        .banner{
-            position:absolute;
-            top:0;
-            right:0;
-            width:450px;
-            height:100%;
-            background:linear-gradient(to right,rgba(90, 24, 17, 1),#5f0606);
-            clip-path:polygon(0 0,100% 0,100% 100%,60% 100%);
-            padding-right:70px;
-            text-align:right;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:flex-end;
-        }
-
-        .wel_text{
-            font-size:40px;
-            margin-top:-50px;
-            line-height:50px;
-        }
-
-        .sub_wel{
-            margin-top:10px;
-            font-size:18px;
-            line-height:24px;
-            letter-spacing:1px;
-        }
-
-        .regs_text{
-            font-size:38px;
-            margin-top:-50px;
-            line-height:50px;
-        }
-
-        .sub_regs{
-            margin-top:10px;
-            font-size:15px;
-            line-height:20px;
-            letter-spacing:1px;
-        }
-        input, textarea, select {
-            color: #222;
+        .sub_regs {
+            font-size: 16px;
+            color: #e6ddbc;
+            margin-bottom: 0.5rem;
         }
     </style>
 </head>
 <body>
     <div class="wrapper">
-        <form method="POST" action="{% url 'login' %}" class="form">
+        <form method="POST" class="form">
             {% csrf_token %}
-            <h1 class="title">Inicio</h1>
-
-            <div class="inp">
-                {{ form.email.label_tag }}
-                {{ form.email}}
-            </div>
-            <div class="inp">
-                {{ form.password.label_tag }}
-                {{ form.password }}
-            </div>
-
-            {% if form.errors %}
+            <h1 class="title">Iniciar Sesión</h1>
+            {{ form.as_p }}
+            {% if form.non_field_errors %}
                 <div style="color: red; margin-top: 10px;">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
                     {% endfor %}
                 </div>
             {% endif %}
-
-            <button class="Submit" type="submit">Iniciar sesión</button>
-            <a href="{% url 'password_reset' %}">¿Olvidaste tu contraseña?</a>
-            <a class="links" href="{% url 'register' %}">¿No tienes una cuenta? Regístrate</a>
+            <button class="Submit" type="submit">Ingresar</button>
+            <a class="links" href="{% url 'register' %}">Registrarse</a>
         </form>
-
         <div class="banner">
-            <h1 class="wel_text">BIENVENIDO DE VUELTA</h1>
-            <p class="sub_wel">¡Nos da gusto verte!</p>
-        </div>
-    </div>
-</body>
-</html>
+            <h1 class="regs_text">BIENVENIDO A RAPSODIA</h1>
+            <p class="sub_regs">El lugar perfecto para disfrutar</p>
+            <p class="sub_regs">de una buena comida
