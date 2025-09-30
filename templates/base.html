@@ -49,6 +49,10 @@
 </head>
 <body>
     <div class="container">
+         <h1>¡Bienvenido a Rapsodia!</h1>
+        <p>Tu sesión ha iniciado correctamente.</p>
+        <p><a href="{% url 'crear_reserva' %}">Consultar disponibilidad de mesas</a></p>
+        <p><a href="{% url 'login' %}">Cerrar sesión</a></p>
         {% block content %}
         <!-- Aquí se inyecta el contenido de los templates hijos -->
         {% endblock %}
