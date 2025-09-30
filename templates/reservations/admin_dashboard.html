@@ -15,10 +15,14 @@
     .stat-box { padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; }
     .chart-container { width: 80%; margin: auto; }
     .filter-form { text-align: center; margin-bottom: 20px; }
+    a { color: #822626; text-decoration: none; font-weight: bold; }
+    a:hover { color: #690202; text-decoration: underline; }
   </style>
 </head>
 <body>
   <h1>Panel de Administración</h1>
+  <!-- Botón de cerrar sesión -->
+  <p><a href="{% url 'login' %}">Cerrar sesión</a></p>
 
   <!-- Estadísticas -->
   <div class="stats">
@@ -74,6 +78,7 @@
 
   <!-- Listado de mesas -->
   <h2>Listado de Mesas</h2>
+  <p><a href="{% url 'mesa_create' %}" class="btn btn-primary">Crear Mesa</a></p>
   <table>
     <thead>
       <tr>
@@ -88,9 +93,9 @@
         <td>{{ mesa.numero }}</td>
         <td>{{ mesa.capacidad }}</td>
         <td>
-  <a href="{% url 'mesa_edit' mesa.id %}">Editar</a> |
-  <a href="{% url 'mesa_delete' mesa.id %}">Eliminar</a>
-</td>
+          <a href="{% url 'mesa_edit' mesa.id %}">Editar</a> |
+          <a href="{% url 'mesa_delete' mesa.id %}">Eliminar</a>
+        </td>
       </tr>
       {% empty %}
       <tr>
@@ -101,39 +106,16 @@
   </table>
 
   <!-- Script del gráfico -->
-
-    const ctx = document.getElementById('reservasChart').getContext('2d');
-    new Chart(ctx, {
-      type: 'line',
-      data: {
-        labels: {{ labels|safe }},
-        datasets: [{
-          label: 'Reservas',
-          data: {{ data|safe }},
-          borderColor: 'rgba(54, 162, 235, 1)',
-          backgroundColor: 'rgba(54, 162, 235, 0.2)',
-          fill: true,
-          tension: 0.3
-        }]
-      },
-      options: {
-        responsive: true,
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-  <!-- Script del gráfico -->
 <script>
   const ctx = document.getElementById('reservasChart').getContext('2d');
 
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: JSON.parse('{{ labels|escapejs }}'),   // ✅ se asegura de ser array válido
+      labels: JSON.parse('{{ labels|escapejs }}'),
       datasets: [{
         label: 'Reservas',
-        data: JSON.parse('{{ data|escapejs }}'),     // ✅ igual aquí
+        data: JSON.parse('{{ data|escapejs }}'),
         borderColor: 'rgba(54, 162, 235, 1)',
         backgroundColor: 'rgba(54, 162, 235, 0.2)',
         fill: true,
@@ -148,7 +130,5 @@
     }
   });
 </script>
-
-
 </body>
 </html>

@@ -8,4 +8,5 @@ urlpatterns = [
     path('users/', include('users.urls')),
     path('reservations/', include('reservations.urls')),
     path('administration/', include('administration.urls')),
+    
 ]
