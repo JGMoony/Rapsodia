@@ -30,28 +30,20 @@ class Reserva(models.Model):
 
     def clean(self):
         # Validación que NO requiere la mesa:
-        if self.personas > 6:
-            raise ValidationError("No se permiten más de 6 personas por reserva.")
+        if isinstance(self.fecha, str):
+            try:
+                self.fecha = datetime.strptime(self.fecha, "%Y-%m-%d").date()
+            except ValueError:
+                raise ValidationError("Formato de fecha inválido (YYYY-MM-DD).")
 
-        # Validación que SI requiere la mesa (CORRECCIÓN CRÍTICA):
-        if self.mesa:
-            if self.personas > self.mesa.capacidad:
-                raise ValidationError(f"La mesa solo tiene capacidad para {self.mesa.capacidad} personas.")
-
-            inicio_reserva = datetime.combine(self.fecha, self.hora)
-            fin_reserva = inicio_reserva + timedelta(hours=3)
-
-            reservas_existentes = Reserva.objects.filter(
-                mesa=self.mesa,
-                fecha=self.fecha,
-                estado='activa'
-            ).exclude(id=self.id)
-
-            for r in reservas_existentes:
-                inicio_existente = datetime.combine(r.fecha, r.hora)
-                fin_existente = inicio_existente + timedelta(hours=3)
-                if (inicio_reserva < fin_existente) and (fin_reserva > inicio_existente):
-                    raise ValidationError("La mesa ya está reservada en este horario.")
+        if isinstance(self.hora, str):
+            try:
+                try:
+                    self.hora = datetime.strptime(self.hora, "%H:%M").time()
+                except ValueError:
+                    self.hora = datetime.strptime(self.hora, "%H:%M:%S").time()
+            except ValueError:
+                raise ValidationError("Formato de hora inválido (HH:MM o HH:MM:SS).")
 
     def __str__(self):
         # Si self.mesa es None, usamos un valor por defecto para no fallar

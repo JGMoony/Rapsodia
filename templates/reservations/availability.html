@@ -5,10 +5,9 @@
     <meta charset="UTF-8">
     <title>Disponibilidad</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
 
         body {
-            font-family: "OV Treasure", serif;
+            font-family: "Cinzel", serif;
             background-color: #e6ddbc;
             color: #262525;
             padding: 2rem;
@@ -76,29 +75,52 @@
             border-radius: 6px;
             margin-top: 2rem;
         }
+
         input[type="date"] {
             background-color: #fff;
             border: 1px solid #ccc;
             border-radius: 6px;
             padding: 0.6rem;
-            font-family: "OV Treasure", serif;
+            font-family: "Cinzel", serif;
             color: #262525;
         }
     </style>
 </head>
 <body>
-    
-    <h1>Consultar Disponibilidad de Mesas</h1>
-<form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit" name="consultar">Consultar Disponibilidad</button>
-</form>
 
-{% if mesas_disponibles %}
-    <h2>Mesas Disponibles para {{ fecha }} a las {{ hora }} ({{ personas }} personas)</h2>
-    
+    <h1>Consultar Disponibilidad de Mesas</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {# MOSTRAR ERRORES GENERALES DEL FORMULARIO #}
+        {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                    <p>{{ error }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {# MOSTRAR ERRORES POR CAMPO (as_p ya hace algo de esto, pero así es más explícito) #}
+        {% for field in form %}
+            <p>
+                {{ field.label_tag }}<br>
+                {{ field }}
+                {% if field.help_text %}
+                  <small style="color: grey">{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                  <p style="color: red">{{ error }}</p>
+                {% endfor %}
+            </p>
+        {% endfor %}
+
+        <button type="submit" name="consultar">Consultar Disponibilidad</button>
+    </form>
+
     {% if mesas_disponibles %}
+        <h2>Mesas Disponibles para {{ fecha }} a las {{ hora }} ({{ personas }} personas)</h2>
         <table class="table">
             <thead>
                 <tr>
@@ -115,36 +137,29 @@
                         <td>
                             <form method="post">
                                 {% csrf_token %}
-                                
                                 <input type="hidden" name="fecha" value="{{ fecha|date:'Y-m-d' }}">
                                 <input type="hidden" name="hora" value="{{ hora }}">
                                 <input type="hidden" name="personas" value="{{ personas }}">
-                                
                                 <input type="hidden" name="mesa_id" value="{{ mesa.id }}">
-                                
-                                <button type="submit" name="reservar" class="btn btn-success btn-sm">Reservar</button>
+                                <button type="submit" name="reservar">Reservar</button>
                             </form>
                         </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-    {% else %}
-        <p>No se encontraron mesas disponibles que cumplan con los requisitos.</p>
     {% endif %}
 
-{% endif %}
+    {% if reserva_confirmada %}
+        <div class="alert-success">
+            <h3>Reserva Confirmada</h3>
+            <p>Cliente: {{ reserva_confirmada.cliente.nombre }}</p>
+            <p>Mesa: {{ reserva_confirmada.mesa.numero }} (Capacidad: {{ reserva_confirmada.mesa.capacidad }})</p>
+            <p>Fecha: {{ reserva_confirmada.fecha }}</p>
+            <p>Hora: {{ reserva_confirmada.hora }}</p>
+            <p>Personas: {{ reserva_confirmada.personas }}</p>
+        </div>
+    {% endif %}
 
-{% if reserva_confirmada %}
-    <div class="alert alert-success">
-        <h3>Reserva Confirmada</h3>
-        <p>Cliente: {{ reserva_confirmada.cliente.nombre }}</p>
-        <p>Mesa: {{ reserva_confirmada.mesa.numero }} (Capacidad: {{ reserva_confirmada.mesa.capacidad }})</p>
-        <p>Fecha: {{ reserva_confirmada.fecha }}</p>
-        <p>Hora: {{ reserva_confirmada.hora }}</p>
-        <p>Personas: {{ reserva_confirmada.personas }}</p>
-    </div>
-{% endif %}
-    {{ block.super }}
 </body>
 </html>

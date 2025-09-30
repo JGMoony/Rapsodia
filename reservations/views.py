@@ -4,7 +4,7 @@ from django.contrib import messages
 from .forms import DisponibilidadForm
 from .models import Mesa, Reserva
 
-
+@login_required
 def disponibilidad_y_reserva(request):
     form = DisponibilidadForm(request.POST or None)
     mesas_disponibles = None
@@ -16,7 +16,6 @@ def disponibilidad_y_reserva(request):
             fecha = form.cleaned_data["fecha"]
             hora = form.cleaned_data["hora"]
             personas = form.cleaned_data["personas"]
-
             mesas_disponibles = Mesa.objects.filter(
                 capacidad__gte=personas
             ).exclude(
@@ -24,19 +23,21 @@ def disponibilidad_y_reserva(request):
                 reserva__hora=hora,
                 reserva__estado="activa"
             )
-
         elif "reservar" in request.POST:
             mesa_id = request.POST.get("mesa_id")
             mesa = get_object_or_404(Mesa, id=mesa_id)
-            
-            
-            reserva_confirmada = Reserva.objects.create( 
-                mesa=mesa, 
+            fecha = request.POST.get("fecha")
+            hora = request.POST.get("hora")
+            personas = request.POST.get("personas")
+
+            reserva_confirmada = Reserva.objects.create(
+                mesa=mesa,
                 fecha=fecha,
                 hora=hora,
                 personas=personas,
-                cliente=cliente
+                cliente=request.user
             )
+
             messages.success(request, "Reserva creada exitosamente.")
 
     return render(request, "reservations/availability.html", {
@@ -64,6 +65,7 @@ def cancelar_reserva(request, reserva_id):
     return redirect("lista_reservas")
 
 
+@login_required
 def lista_mesas(request):
     mesas = Mesa.objects.all()
     return render(request, "reservations/mesas.html", {"mesas": mesas})

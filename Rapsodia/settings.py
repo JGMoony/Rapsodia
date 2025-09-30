@@ -76,7 +76,6 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 LANGUAGE_CODE = 'es'
 TIME_ZONE = 'America/Bogota'
-TIME_ZONE = 'America/Bogota'
 USE_I18N = True
 USE_TZ = True
 
