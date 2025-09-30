@@ -92,30 +92,7 @@
 
     <form method="post">
         {% csrf_token %}
-
-        {# MOSTRAR ERRORES GENERALES DEL FORMULARIO #}
-        {% if form.non_field_errors %}
-            <div class="alert alert-danger">
-                {% for error in form.non_field_errors %}
-                    <p>{{ error }}</p>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        {# MOSTRAR ERRORES POR CAMPO (as_p ya hace algo de esto, pero así es más explícito) #}
-        {% for field in form %}
-            <p>
-                {{ field.label_tag }}<br>
-                {{ field }}
-                {% if field.help_text %}
-                  <small style="color: grey">{{ field.help_text }}</small>
-                {% endif %}
-                {% for error in field.errors %}
-                  <p style="color: red">{{ error }}</p>
-                {% endfor %}
-            </p>
-        {% endfor %}
-
+        {{ form.as_p }}
         <button type="submit" name="consultar">Consultar Disponibilidad</button>
     </form>
 
@@ -148,6 +125,8 @@
                 {% endfor %}
             </tbody>
         </table>
+    {% else %}
+        <p>No se encontraron mesas disponibles que cumplan con los requisitos.</p>
     {% endif %}
 
     {% if reserva_confirmada %}
