@@ -85,7 +85,7 @@ def editar_reserva(request, reserva_id):
         reserva.save()
         return redirect('perfil_usuario')
 
-    return render(request, 'account/editar_reserva.html', {'reserva': reserva})
+    return render(request, 'reservations/editar_reserva.html', {'reserva': reserva})
 
 def base_view(request):
     return render(request, 'base.html')

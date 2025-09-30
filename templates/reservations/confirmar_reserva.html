@@ -69,16 +69,15 @@
     <li>Cliente: {{ datos.cliente }}</li>
 </ul>
 
-<form method="POST">
+<form method="POST" action="{% url 'confirmar_reserva' %}">
     {% csrf_token %}
-    <input type="hidden" name="mesa" value="{{ form.initial.mesa.id }}">
-    <input type="hidden" name="fecha" value="{{ form.initial.fecha }}">
-    <input type="hidden" name="hora" value="{{ form.initial.hora }}">
-    <input type="hidden" name="personas" value="{{ form.initial.personas }}">
-    <input type="hidden" name="cliente" value="{{ form.initial.cliente }}">
+    <input type="hidden" name="mesa_id" value="{{ mesa_id }}">
+    <input type="hidden" name="fecha" value="{{ fecha }}">
+    <input type="hidden" name="hora" value="{{ hora }}">
+    <input type="hidden" name="personas" value="{{ personas }}">
     <button type="submit" name="confirmar">Confirmar</button>
     <button type="submit" name="editar">Editar</button>
-    <a href="{% url 'disponibilidad_y_reserva' %}">Cancelar</a>
+    <button type="submit" name="cancelar">Cancelar</button>
 </form>
 {% endblock %}
 
