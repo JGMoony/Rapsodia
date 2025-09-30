@@ -4,11 +4,12 @@ from users.models import User
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
-from datetime import datetime, timedelta
+from datetime import datetime
+
 
 class Mesa(models.Model):
     numero = models.IntegerField(unique=True)
-    capacidad = models.IntegerField(default=6)  
+    capacidad = models.IntegerField(default=6)
     disponible = models.BooleanField(default=True)
 
     def __str__(self):
@@ -16,20 +17,22 @@ class Mesa(models.Model):
 
 
 class Reserva(models.Model):
+    ESTADOS = [
+        ('activa', 'Activa'),
+        ('cancelada', 'Cancelada'),
+        ('pasada', 'Pasada')
+    ]
+
     cliente = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     mesa = models.ForeignKey(Mesa, on_delete=models.CASCADE)
     fecha = models.DateField()
     hora = models.TimeField()
     personas = models.PositiveIntegerField(default=1)
-    estado = models.CharField(max_length=20, choices=[
-        ('activa', 'Activa'),
-        ('cancelada', 'Cancelada'),
-        ('pasada', 'Pasada')
-    ], default='activa')
+    estado = models.CharField(max_length=20, choices=ESTADOS, default='activa')
     creada_en = models.DateTimeField(default=timezone.now)
 
     def clean(self):
-        # Validación que NO requiere la mesa:
+        # Validación manual de fecha y hora si vienen como string
         if isinstance(self.fecha, str):
             try:
                 self.fecha = datetime.strptime(self.fecha, "%Y-%m-%d").date()
@@ -45,8 +48,13 @@ class Reserva(models.Model):
             except ValueError:
                 raise ValidationError("Formato de hora inválido (HH:MM o HH:MM:SS).")
 
+        # Validación de capacidad
+        if self.mesa_id and self.personas and self.mesa and self.personas > self.mesa.capacidad:
+            raise ValidationError(
+                f"La mesa {self.mesa.numero} tiene capacidad máxima de {self.mesa.capacidad} personas."
+            )
+
     def __str__(self):
-        # Si self.mesa es None, usamos un valor por defecto para no fallar
         mesa_str = f"Mesa {self.mesa.numero}" if self.mesa else "Mesa NO ASIGNADA"
         return f"Reserva {self.id} - {mesa_str} - {self.fecha} {self.hora} ({self.personas} personas)"
 
@@ -60,19 +68,24 @@ class Reserva(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
-        
-        # Corrección: Verificar self.mesa antes de acceder a sus propiedades
+
+        # Actualizar disponibilidad de mesa solo si está activa
         if self.estado == 'activa' and self.mesa:
             self.mesa.disponible = False
             self.mesa.save()
-            send_mail(
-                subject='Confirmación de reserva en Rapsodia',
-                message=f"Hola {self.cliente.nombre}, tu reserva está confirmada:\n\n"
+
+            # Notificación al cliente
+            if self.cliente and self.cliente.email:
+                send_mail(
+                    subject='Confirmación de reserva en Rapsodia',
+                    message=(
+                        f"Hola {self.cliente.nombre}, tu reserva está confirmada:\n\n"
                         f"Mesa: {self.mesa.numero}\n"
                         f"Fecha: {self.fecha}\n"
                         f"Hora: {self.hora}\n"
-                        f"Personas: {self.personas}",
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[self.cliente.email],
-                fail_silently=False,
-            )
+                        f"Personas: {self.personas}"
+                    ),
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    recipient_list=[self.cliente.email],
+                    fail_silently=False,
+                )

@@ -1,10 +1,20 @@
 from datetime import datetime, timedelta
-from .forms import EditarReservaForm, ReservaForm
 from django.shortcuts import get_object_or_404, render, redirect
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
-from .forms import DisponibilidadForm
+from django.db.models import Count
+from django.utils.timezone import now
+from django.views.generic import ListView, CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+from .forms import EditarReservaForm, ReservaForm, DisponibilidadForm
 from .models import Mesa, Reserva
+from users.models import User
+import json
+
+
+# ------------------------------
+#  VISTAS DE RESERVAS CLIENTE
+# ------------------------------
 
 @login_required
 def disponibilidad_y_reserva(request):
@@ -17,13 +27,15 @@ def disponibilidad_y_reserva(request):
             fecha = form.cleaned_data["fecha"]
             hora = form.cleaned_data["hora"]
             personas = form.cleaned_data["personas"]
+
             mesas_disponibles = Mesa.objects.filter(
-                capacidad__gte=personas
+                capacidad__gte=personas, disponible=True
             ).exclude(
                 reserva__fecha=fecha,
                 reserva__hora=hora,
                 reserva__estado="activa"
             )
+
             return render(request, "reservations/availability.html", {
                 "form": form,
                 "mesas_disponibles": mesas_disponibles,
@@ -31,12 +43,14 @@ def disponibilidad_y_reserva(request):
                 "hora": hora,
                 "personas": personas,
             })
+
         elif "reservar" in request.POST:
             mesa_id = request.POST.get("mesa_id")
             mesa = get_object_or_404(Mesa, id=mesa_id)
             fecha = request.POST.get("fecha")
             hora = request.POST.get("hora")
             personas = request.POST.get("personas")
+
             datos = {
                 "mesa": mesa.numero,
                 "capacidad": mesa.capacidad,
@@ -52,6 +66,7 @@ def disponibilidad_y_reserva(request):
                 "hora": hora,
                 "personas": personas,
             })
+
     return render(request, "reservations/availability.html", {
         "form": form,
         "mesas_disponibles": mesas_disponibles,
@@ -59,6 +74,9 @@ def disponibilidad_y_reserva(request):
         "hora": hora,
         "personas": personas,
     })
+
+
+@login_required
 @login_required
 def confirmar_reserva(request):
     if request.method == "POST":
@@ -67,8 +85,9 @@ def confirmar_reserva(request):
             mesa = get_object_or_404(Mesa, id=mesa_id)
             fecha = request.POST.get("fecha")
             hora = request.POST.get("hora")
-            personas = request.POST.get("personas")
+            personas = int(request.POST.get("personas"))  # ✅ Convertir a entero
             cliente = request.user
+
             reserva = Reserva.objects.create(
                 mesa=mesa,
                 fecha=fecha,
@@ -77,6 +96,7 @@ def confirmar_reserva(request):
                 cliente=cliente
             )
             return render(request, "reservations/reserva_confirmada.html", {"reserva": reserva})
+
         elif "editar" in request.POST:
             form = DisponibilidadForm(initial={
                 "fecha": request.POST.get("fecha"),
@@ -84,9 +104,13 @@ def confirmar_reserva(request):
                 "personas": request.POST.get("personas")
             })
             return render(request, "reservations/availability.html", {"form": form})
+
         elif "cancelar" in request.POST:
             return redirect("disponibilidad_y_reserva")
+
     return redirect("disponibilidad_y_reserva")
+
+
 
 @login_required
 def perfil_usuario(request):
@@ -99,14 +123,18 @@ def cancelar_reserva(request, reserva_id):
     reserva = get_object_or_404(Reserva, id=reserva_id)
     dt_reserva = datetime.combine(reserva.fecha, reserva.hora)
     dt_actual = datetime.now()
+
     if dt_reserva - dt_actual < timedelta(hours=24):
         messages.error(request, "Solo puedes cancelar la reserva con al menos 24 horas de anticipación.")
         return redirect("perfil_usuario")
+
     reserva.estado = "cancelada"
     reserva.save()
     messages.info(request, "Reserva cancelada.")
     return redirect("perfil_usuario")
 
+
+@login_required
 def editar_reserva(request, reserva_id):
     reserva = get_object_or_404(Reserva, id=reserva_id, cliente=request.user)
 
@@ -120,3 +148,73 @@ def editar_reserva(request, reserva_id):
         form = EditarReservaForm(instance=reserva)
 
     return render(request, "reservations/editar_reserva.html", {"form": form})
+
+
+# ------------------------------
+#  DASHBOARD ADMINISTRATIVO
+# ------------------------------
+@user_passes_test(lambda u: u.is_staff)  # Solo admin puede ver el panel
+def admin_dashboard(request):
+    clientes = User.objects.all()
+    mesas = Mesa.objects.all()
+    reservas = Reserva.objects.all().order_by("-fecha", "-hora")
+
+    # Filtro (semana o mes)
+    filtro = request.GET.get("filtro", "semana")
+    hoy = now()
+
+    if filtro == "semana":
+        inicio = hoy - timedelta(days=7)
+        data = reservas.filter(fecha__gte=inicio).extra({'day': "date(fecha)"}).values("day").annotate(total=Count("id"))
+        labels = [str(d["day"]) for d in data]
+    else:
+        inicio = hoy - timedelta(days=30)
+        data = reservas.filter(fecha__gte=inicio).extra({'month': "strftime('%%m', fecha)"}).values("month").annotate(total=Count("id"))
+        labels = [f"Mes {d['month']}" for d in data]
+
+    values = [d["total"] for d in data]
+
+    context = {
+        "clientes": clientes,
+        "mesas": mesas,
+        "reservas": reservas,
+        "labels": json.dumps(labels),   # 👈 Listo para JS
+        "data": json.dumps(values),     # 👈 Listo para JS
+        "filtro": filtro,
+        "reservas_activas": reservas.filter(estado="activa").count(),
+        "reservas_canceladas": reservas.filter(estado="cancelada").count(),
+        "reservas_pasadas": reservas.filter(estado="pasada").count(),
+    }
+    return render(request, "reservations/admin_dashboard.html", context)
+# ------------------------------
+#  CRUD DE MESAS (CBV)
+# ------------------------------
+
+class MesaListView(ListView):
+    model = Mesa
+    template_name = "reservations/mesa_list.html"
+
+
+class MesaCreateView(CreateView):
+    model = Mesa
+    fields = ["numero", "capacidad", "disponible"]
+    template_name = "reservations/mesa_form.html"
+    success_url = reverse_lazy("mesa_list")
+
+
+class MesaUpdateView(UpdateView):
+    model = Mesa
+    fields = ["numero", "capacidad", "disponible"]
+    template_name = "reservations/mesa_form.html"
+    success_url = reverse_lazy("mesa_list")
+
+
+class MesaDeleteView(DeleteView):
+    model = Mesa
+    template_name = "reservations/mesa_confirm_delete.html"
+    success_url = reverse_lazy("mesa_list")
+
+    def get(self, request, *args, **kwargs):
+        print("kwargs:", kwargs)
+        return super().get(request, *args, **kwargs)
+
