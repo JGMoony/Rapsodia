@@ -12,10 +12,6 @@ from users.models import User
 import json
 
 
-# ------------------------------
-#  VISTAS DE RESERVAS CLIENTE
-# ------------------------------
-
 @login_required
 def disponibilidad_y_reserva(request):
     form = DisponibilidadForm(request.POST or None)
@@ -85,7 +81,7 @@ def confirmar_reserva(request):
             mesa = get_object_or_404(Mesa, id=mesa_id)
             fecha = request.POST.get("fecha")
             hora = request.POST.get("hora")
-            personas = int(request.POST.get("personas"))  # ✅ Convertir a entero
+            personas = int(request.POST.get("personas")) 
             cliente = request.user
 
             reserva = Reserva.objects.create(
@@ -157,7 +153,6 @@ def admin_dashboard(request):
     mesas = Mesa.objects.all()
     reservas = Reserva.objects.all().order_by("-fecha", "-hora")
 
-    # Filtro (semana o mes)
     filtro = request.GET.get("filtro", "semana")
     hoy = now()
 
