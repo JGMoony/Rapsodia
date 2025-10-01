@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{% if object %}Editar{% else %}Crear{% endif %} Mesa</h2>
+<form method="post">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="btn btn-success">{% if object %}Actualizar{% else %}Crear{% endif %}</button>
+  <a href="{% url 'mesa_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

@@ -23,7 +23,6 @@ INSTALLED_APPS = [
     'django_extensions',
     'users',
     'reservations',
-    'administration',
     'django.contrib.sites',
     'allauth',
     'allauth.account',

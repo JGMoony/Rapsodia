@@ -112,6 +112,11 @@
             margin-bottom: 0.5rem;
         }
 
+        a {
+            display: flex;
+            width: fit-content;
+        }
+
         @media screen and (max-width: 768px) {
     .wrapper {
         grid-template-columns: 1fr;
@@ -145,7 +150,9 @@
             {% endif %}
             <button class="Submit" type="submit">Terminar</button>
             <a class="links" href="{% url 'login' %}">Iniciar Sesión</a>
-            <a class="links" href="{% provider_login_url 'google' %}" class="btn btn-outline-dark">Registrarse con Google</a>
+            <a href="{% provider_login_url 'google' %}">
+                <img src="{% static 'img/Gmail.png' %}" alt="Iniciar sesión con Google" style="height: 40px;", weight="30px">
+            </a>
         </form>
         <div class="banner">
             <h1 class="regs_text">BIENVENIDO A RAPSODIA</h1>

@@ -30,11 +30,18 @@ def login_view(request):
         usuario = authenticate(request, username=correo, password=password)
         if usuario:
             login(request, usuario)
-            print("login exitoso, redirigiendo a home")
-            return redirect('home')
+            print("login exitoso")
+            # Redirige según tipo de usuario
+            if usuario.is_staff or usuario.is_superuser:
+                print("usuario admin, redirigiendo a dashboard")
+                return redirect('admin_dashboard')  # nombre de tu dashboard de admin
+            else:
+                print("usuario normal, redirigiendo a home")
+                return redirect('home')
         else:
             error = 'Correo o contraseña incorrectos.'
     return render(request, 'account/login.html', {'form': form, 'error': error})
+
 
 def logout_view(request):
     logout(request)
