@@ -1,4 +1,5 @@
 {% load static %}
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="es-co">
 <head>
@@ -144,6 +145,7 @@
             {% endif %}
             <button class="Submit" type="submit">Terminar</button>
             <a class="links" href="{% url 'login' %}">Iniciar Sesión</a>
+            <a class="links" href="{% provider_login_url 'google' %}" class="btn btn-outline-dark">Registrarse con Google</a>
         </form>
         <div class="banner">
             <h1 class="regs_text">BIENVENIDO A RAPSODIA</h1>
