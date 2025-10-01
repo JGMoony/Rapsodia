@@ -75,8 +75,6 @@ def disponibilidad_y_reserva(request):
         "personas": personas,
     })
 
-
-@login_required
 @login_required
 def confirmar_reserva(request):
     if request.method == "POST":
@@ -129,6 +127,7 @@ def cancelar_reserva(request, reserva_id):
         return redirect("perfil_usuario")
 
     reserva.estado = "cancelada"
+    reserva.mesa.disponible = True
     reserva.save()
     messages.info(request, "Reserva cancelada.")
     return redirect("perfil_usuario")

@@ -68,7 +68,6 @@ class Reserva(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
-
         # Actualizar disponibilidad de mesa solo si está activa
         if self.estado == 'activa' and self.mesa:
             self.mesa.disponible = False
@@ -89,3 +88,6 @@ class Reserva(models.Model):
                     recipient_list=[self.cliente.email],
                     fail_silently=False,
                 )
+        elif self.estado == 'cancelada' or self.estado == 'pasada' and self.mesa:
+            self.mesa.disponible = True
+            self.mesa.save(update_fields=["disponible"])

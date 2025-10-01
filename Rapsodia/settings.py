@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_extensions',
+    "django_crontab",
     'users',
     'reservations',
     'administration',
@@ -67,7 +68,7 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_FILE_PATH = '/tmp/app-messages/'
 EMAIL_HOST = os.getenv("SMTP_HOST")
 EMAIL_PORT = int(os.getenv("SMTP_PORT", 587))
