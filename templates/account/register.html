@@ -1,4 +1,5 @@
 {% load static %}
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="es-co">
 <head>
@@ -131,10 +132,13 @@
 </head>
 <body>
     <div class="wrapper">
+
         <form method="POST" class="form">
             {% csrf_token %}
             <h1 class="title">Registro</h1>
+
             {{ form.as_p }}
+
             {% if form.non_field_errors %}
                 <div style="color: red; margin-top: 10px;">
                     {% for error in form.non_field_errors %}
@@ -142,14 +146,26 @@
                     {% endfor %}
                 </div>
             {% endif %}
+
             <button class="Submit" type="submit">Terminar</button>
             <a class="links" href="{% url 'login' %}">Iniciar Sesión</a>
         </form>
+
+        <div class="separator">
+            <h3>o</h3>
+        </div>
+
+        <div class="social-login">
+            <a href="{% provider_login_url 'google' %}">Inicia sesión con Google</a>
+        </div>
+
         <div class="banner">
             <h1 class="regs_text">BIENVENIDO A RAPSODIA</h1>
             <p class="sub_regs">El lugar perfecto para disfrutar</p>
             <p class="sub_regs">de una buena comida</p>
         </div>
+
     </div>
 </body>
+
 </html>

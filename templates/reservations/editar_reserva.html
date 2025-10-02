@@ -1,42 +1,16 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es-co">
-<head>
-	<meta charset="UTF-8">
-	<title>Editar Reserva</title>
-	<style>
-		body {
-			font-family: "OV Treasure", serif;
-			background-color: #e6ddbc;
-			color: #262525;
-			padding: 2rem;
-		}
-		.edit {
-			background-color: #fff;
-			padding: 2rem;
-			border-radius: 8px;
-			box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-			max-width: 600px;
-			margin: auto;
-		}
-		h2 {
-			color: #822626;
-		}
-		a {
-			color: #822626;
-			text-decoration: underline;
-		}
-	</style>
-</head>
-<body>
-	<div class="edit">
-		<h2>Editar Reserva</h2>
-		<form method="post">
-			{% csrf_token %}
-			{{ form.as_p }}
-			<button type="submit">Guardar cambios</button>
-			<a href="{% url 'perfil_usuario' %}">Cancelar</a>
-		</form>
-	</div>
-</body>
-</html>
+
+{% block title %}Editar Reserva{% endblock %}
+
+{% block content %}
+<div class="edit">
+    <h2>Editar Reserva</h2>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Guardar cambios</button>
+        <a href="{% url 'perfil_usuario' %}">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

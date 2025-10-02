@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>¡Bienvenido a Rapsodia!</h1>
+    <p>Tu sesión ha iniciado correctamente.</p>
+
+    <!-- Botón para consultar disponibilidad -->
+    <p><a href="{% url 'crear_reserva' %}">Consultar disponibilidad de mesas</a></p>
+
+    <!-- Botón para cerrar sesión -->
+    <form method="post" action="{% url 'logout' %}" class="form">
+        {% csrf_token %}
+        <button type="submit">Cerrar sesión</button>
+    </form>
+{% endblock %}

@@ -1,86 +1,28 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es-co">
-<head>
-    <meta charset="UTF-8">
-    <title>Reserva</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
 
-        body {
-            font-family: "OV Treasure", serif;
-            background-color: #e6ddbc;
-            color: #262525;
-            padding: 2rem;
-        }
+{% block title %}Confirmar Reserva{% endblock %}
 
-        h2 {
-            margin-bottom: 1rem;
-            color: #822626;
-        }
-
-        form {
-            background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            max-width: 600px;
-            margin: auto;
-        }
-
-        label {
-            font-weight: bold;
-            margin-top: 1rem;
-            display: block;
-        }
-
-        input, select, button {
-            width: 100%;
-            padding: 0.6rem;
-            margin-top: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        button {
-            background-color: #822626;
-            color: white;
-            border: none;
-            cursor: pointer;
-            margin-top: 1.5rem;
-        }
-
-        button:hover {
-            background-color: #690202;
-        }
-    </style>
-</head>
-<body>
-    
 {% block content %}
-<h2>Confirmar reserva</h2>
+    <h2>Confirmar reserva</h2>
 
-<ul>
-    <li>Fecha: {{ datos.fecha }}</li>
-    <li>Hora: {{ datos.hora }}</li>
-    <li>Mesa: {{ datos.mesa }}</li>
-    <li>Personas: {{ datos.personas }}</li>
-    <li>Cliente: {{ datos.cliente }}</li>
-</ul>
+    <ul>
+        <li>Fecha: {{ datos.fecha }}</li>
+        <li>Hora: {{ datos.hora }}</li>
+        <li>Mesa: {{ datos.mesa }}</li>
+        <li>Personas: {{ datos.personas }}</li>
+        <li>Cliente: {{ datos.cliente }}</li>
+    </ul>
 
-<form method="POST" action="{% url 'confirmar_reserva' %}">
-    {% csrf_token %}
-    <input type="hidden" name="mesa_id" value="{{ mesa_id }}">
-    <input type="hidden" name="fecha" value="{{ fecha }}">
-    <input type="hidden" name="hora" value="{{ hora }}">
-    <input type="hidden" name="personas" value="{{ personas }}">
-    <button type="submit" name="confirmar">Confirmar</button>
-    <button type="submit" name="editar">Editar</button>
-    <button type="submit" name="cancelar">Cancelar</button>
-</form>
+    <form method="POST" action="{% url 'confirmar_reserva' %}">
+        {% csrf_token %}
+        <input type="hidden" name="mesa_id" value="{{ mesa_id }}">
+        <input type="hidden" name="fecha" value="{{ fecha }}">
+        <input type="hidden" name="hora" value="{{ hora }}">
+        <input type="hidden" name="personas" value="{{ personas }}">
+        
+        <button type="submit" name="confirmar">Confirmar</button>
+        <button type="submit" name="editar">Editar</button>
+        <button type="submit" name="cancelar">Cancelar</button>
+    </form>
 {% endblock %}
-
-    {{ block.super }}
-</body>
-</html>

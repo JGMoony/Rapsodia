@@ -25,14 +25,20 @@ INSTALLED_APPS = [
     'users',
     'reservations',
     'administration',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
 ]
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 LOGIN_URL = '/users/login/'
 LOGIN_REDIRECT_URL = '/users/inicio/'
+LOGOUT_REDIRECT_URL = '/users/login/'
 
 ROOT_URLCONF = 'Rapsodia.urls'
 
@@ -95,7 +101,32 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware",
 ]
+
+
+# Configuración de Google OAuth2
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': os.getenv('CLIENT_ID'),
+            'secret': os.getenv('SECRET'),
+            'key': ''
+        },
+        'SCOPE': ['email', 'profile'],   # profile para obtener nombre
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'OAUTH_PKCE_ENABLED': True,
+    }
+}
+
+SOCIALACCOUNT_LOGIN_ON_GET = True
+SOCIALACCOUNT_ADAPTER = "users.adapters.MySocialAccountAdapter"
+ACCOUNT_LOGIN_METHODS = {"email"}  # <-- solo email
+ACCOUNT_SIGNUP_FIELDS = ["email*", "nombre", "apellido", "password1*", "password2*"]
+
+ACCOUNT_EMAIL_VERIFICATION = "none"  # O "mandatory" si quieres confirmar correo
+ACCOUNT_EMAIL_REQUIRED = True
+SOCIALACCOUNT_AUTO_SIGNUP = True
 
 LOGGING = {
     'version': 1,

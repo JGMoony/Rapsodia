@@ -1,42 +1,111 @@
-{% block content %}
-<h2>Mi perfil</h2>
-<a href="{% url 'editar_perfil' %}">Editar perfil</a>
-<a href="{% url 'crear_reserva' %}">Nueva reserva</a>
+{% extends "base.html" %}
 
-<h3>Historial de reservas</h3>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Mesa</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Personas</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for reserva in reservas %}
-        <tr>
-            <td>{{ reserva.id }}</td>
-            <td>{{ reserva.mesa.numero }}</td>
-            <td>{{ reserva.fecha }}</td>
-            <td>{{ reserva.hora }}</td>
-            <td>{{ reserva.personas }}</td>
-            <td>{{ reserva.estado }}</td>
-            <td>
-                {% if reserva.estado == 'activa' %}
-                    <a href="{% url 'cancelar_reserva' reserva.id %}">Cancelar</a>
-                    <a href="{% url 'editar_reserva' reserva.id %}">Editar</a>
-                {% else %}
-                    —
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="7">No tienes reservas registradas.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
+{% block content %}
+<div class="perfil-container">
+    <h2>Mi perfil</h2>
+    <div class="acciones">
+        <a class="btn" href="{% url 'editar_perfil' %}">Editar perfil</a>
+    </div>
+
+    <h3>Historial de reservas</h3>
+    <table class="tabla-reservas">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Mesa</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Personas</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+            <tr>
+                <td>{{ reserva.id }}</td>
+                <td>{{ reserva.mesa.numero }}</td>
+                <td>{{ reserva.fecha }}</td>
+                <td>{{ reserva.hora }}</td>
+                <td>{{ reserva.personas }}</td>
+                <td>{{ reserva.estado }}</td>
+                <td>
+                    {% if reserva.estado == 'activa' %}
+                        <a class="btn-accion cancelar" href="{% url 'cancelar_reserva' reserva.id %}">Cancelar</a>
+                        <a class="btn-accion editar" href="{% url 'editar_reserva' reserva.id %}">Editar</a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7">No tienes reservas registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    .perfil-container {
+        max-width: 900px;
+        margin: auto;
+        background: #fff;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h2, h3 {
+        color: #822626;
+    }
+    .acciones {
+        margin: 1rem 0;
+    }
+    .acciones .btn {
+        background: #822626;
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        text-decoration: none;
+        margin-right: 0.5rem;
+    }
+    .acciones .btn:hover {
+        background: #690202;
+    }
+    .tabla-reservas {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 1rem;
+    }
+    .tabla-reservas th, .tabla-reservas td {
+        border: 1px solid #ddd;
+        padding: 0.8rem;
+        text-align: center;
+    }
+    .tabla-reservas th {
+        background-color: #f5f5f5;
+    }
+    .btn-accion {
+        padding: 0.3rem 0.6rem;
+        border-radius: 4px;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+    .btn-accion.cancelar {
+        background-color: #d9534f;
+        color: #fff;
+    }
+    .btn-accion.cancelar:hover {
+        background-color: #b52b27;
+    }
+    .btn-accion.editar {
+        background-color: #5bc0de;
+        color: #fff;
+        margin-left: 0.3rem;
+    }
+    .btn-accion.editar:hover {
+        background-color: #31b0d5;
+    }
+</style>
 {% endblock %}

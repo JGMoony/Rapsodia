@@ -1,40 +1,39 @@
 {% load static %}
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="es-co">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
-
         * {
-            margin: 0;
-            padding: 0;
+            margin: 2;
+            padding: 2;
             font-family: "OV Treasure", serif;
             color: #262525;
         }
-
         body {
+            font-family: Arial, sans-serif;
             background-color: #e6ddbc;
-            display: grid;
-            place-items: center;
-            height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            min-height: 100vh;
+            justify-content: center;
+            align-items: center;
         }
-
         .wrapper {
-            width: 800px;
-            height: 75vh;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            border: 3px solid #822626;
-            box-shadow: 0 0 30px #690202;
+            display: flex;
             background-color: #fff;
-            border-radius: 12px;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
             overflow: hidden;
+            max-width: 900px;
+            width: 100%;
         }
-
         .form {
+
             padding: 2rem;
             display: flex;
             flex-direction: column;
@@ -60,72 +59,109 @@
             color: #fff;
             border: none;
             padding: 0.8rem;
+
             border-radius: 6px;
             font-size: 1rem;
             margin-top: 1.5rem;
             cursor: pointer;
+
         }
 
         .Submit:hover {
             background-color: #690202;
         }
-
+        .form h1 {
+            color: #822626;
+            margin-bottom: 1rem;
+        }
+        .form button {
+            background-color: #822626;
+            color: #fff;
+            border: none;
+            padding: 0.8rem;
+            width: 100%;
+            border-radius: 6px;
+            margin-top: 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        .form button:hover {
+            background-color: #690202;
+        }
         .links {
+            display: block;
+            text-align: center;
             margin-top: 1rem;
             color: #822626;
-            text-decoration: none;
+            text-decoration: underline;
+        }
+        .google-login {
+            margin: 1rem 0;
+            text-align: center;
+        }
+        .google-login a {
+            color: #822626;
             font-weight: bold;
+            text-decoration: underline;
         }
-
-        .links:hover {
-            color: #690202;
-        }
-
         .banner {
-            width: 105%;
-            height: 100%;
-            background: linear-gradient(to right, #822626, #690202);
+            flex: 1;
+            background: linear-gradient(rgba(130, 38, 38, 0.9), rgba(105, 2, 2, 0.9));
+            color: #fff;
             padding: 2rem;
-            box-sizing: border-box;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: flex-end;
-            text-align: right;
-            overflow-y: auto;
+            text-align: center;
         }
-
-        .regs_text {
-            font-size: 32px;
-            line-height: 1.2;
-            color: #e6ddbc;
+        .banner h1 {
+            font-size: 2rem;
             margin-bottom: 1rem;
+            color: #fff;
         }
-
-        .sub_regs {
-            font-size: 16px;
-            color: #e6ddbc;
-            margin-bottom: 0.5rem;
+        .banner p {
+            margin: 0.5rem 0;
+            color: #fff;
+        }
+        .error {
+            color: red;
+            margin-top: 10px;
         }
     </style>
 </head>
 <body>
     <div class="wrapper">
+        <!-- Formulario -->
         <form method="POST" class="form">
             {% csrf_token %}
             <h1 class="title">Iniciar Sesión</h1>
+            
             {{ form.as_p }}
+            
             {% if form.non_field_errors %}
-                <div style="color: red; margin-top: 10px;">
+                <div class="error">
                     {% for error in form.non_field_errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
                 </div>
             {% endif %}
-            <button class="Submit" type="submit">Ingresar</button>
+            
+            <button type="submit">Ingresar</button>
+            
             <a class="links" href="{% url 'register' %}">Registrarse</a>
+
+            <div class="google-login">
+                <h3>o</h3>
+                <a href="{% provider_login_url 'google' %}">Inicia sesión con Google</a>
+            </div>
         </form>
+
+        <!-- Banner lateral -->
         <div class="banner">
             <h1 class="regs_text">BIENVENIDO A RAPSODIA</h1>
             <p class="sub_regs">El lugar perfecto para disfrutar</p>
-            <p class="sub_regs">de una buena comida
+            <p class="sub_regs">de una buena comida</p>
+        </div>
+    </div>
+</body>
+</html>

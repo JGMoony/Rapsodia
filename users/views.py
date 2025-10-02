@@ -101,8 +101,8 @@ def editar_reserva(request, reserva_id):
     return render(request, 'reservations/editar_reserva.html', {'reserva': reserva})
 
 
-def base_view(request):
-    return render(request, 'base.html')
+def home(request):
+    return render(request, 'home.html')
 
 
 # ==============================
