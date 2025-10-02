@@ -3,84 +3,163 @@
 <html lang="es-co">
 <head>
     <meta charset="UTF-8">
-    <title>Reserva</title>
+    <title>Rapsodia - Confirmar Reserva</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
+        /* Definición de la Paleta de Colores de Rapsodia */
+        :root {
+            --color-rapsodia-base: #3C1B43; /* Berenjena Profundo (Títulos, Texto) */
+            --color-lujo-acento: #C79F5E;  /* Oro Antiguo (Botón Confirmar) */
+            --color-fondo-limpio: #F7F4E9;  /* Crema de Vainilla (Fondo Principal) */
+            --color-texto-principal: #1A1A1A; 
+            --color-resaltado: #8B2C3F;     /* Borgoña Rico (Cancelar/Error) */
+        }
 
         body {
-            font-family: "OV Treasure", serif;
-            background-color: #e6ddbc;
-            color: #262525;
-            padding: 2rem;
+            background-color: var(--color-fondo-limpio);
+            color: var(--color-texto-principal);
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
         }
 
+        /* ------------------ Título y Contenedor ------------------ */
         h2 {
-            margin-bottom: 1rem;
-            color: #822626;
+            font-family: 'Cinzel', serif;
+            color: var(--color-rapsodia-base);
+            font-size: 2.5rem;
+            margin: 3rem 0 1.5rem 0;
         }
 
-        form {
+        /* Tarjeta de Resumen */
+        .resumen-card {
             background-color: #fff;
-            padding: 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-            max-width: 600px;
+            padding: 2.5rem;
+            border-radius: 12px;
+            /* Borde sutil en Oro Antiguo para distinción */
+            border: 1px solid var(--color-lujo-acento); 
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+            max-width: 550px;
             margin: auto;
+            text-align: left;
+        }
+        p{
+            font-size: 1.6rem;
+            line-height: 1.6;
+        }
+        
+        /* ------------------ Detalles de la Reserva ------------------ */
+        .resumen-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 2rem;
         }
 
-        label {
+        .resumen-card ul li {
+            font-size: 1.15rem;
+            padding: 0.5rem 0;
+            border-bottom: 1px dashed #eee;
+            color: var(--color-texto-principal);
+        }
+
+        .resumen-card ul li b {
+            /* Destacamos los labels de los datos */
+            color: var(--color-rapsodia-base); 
+            display: inline-block;
+            width: 120px;
             font-weight: bold;
-            margin-top: 1rem;
-            display: block;
+        }
+        
+        .resumen-card ul li span {
+            /* Color de acento para los valores de la reserva */
+            color: var(--color-resaltado); 
+            font-weight: 700;
         }
 
-        input, select, button {
-            width: 100%;
-            padding: 0.6rem;
-            margin-top: 0.5rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
+        /* ------------------ Botones de Acción ------------------ */
+        .botonera {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 2rem;
         }
-
-        button {
-            background-color: #822626;
-            color: white;
+        
+        .botonera button {
+            width: 100%; /* Hacemos que los botones ocupen el mismo espacio */
+            padding: 1rem;
             border: none;
+            border-radius: 6px;
+            font-size: 1.05rem;
             cursor: pointer;
-            margin-top: 1.5rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            transition: all 0.2s ease;
         }
 
-        button:hover {
+        /* Botón Confirmar (Principal) */
+        button[name="confirmar"] {
+            background-color: var(--color-lujo-acento); /* Oro Antiguo */
+            color: var(--color-rapsodia-base);
+        }
+
+        button[name="confirmar"]:hover {
+            background-color: #B58F54; /* Un tono más suave de Oro */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transform: translateY(-1px);
+        }
+
+        /* Botón Editar (Secundario/Neutro) */
+        button[name="editar"] {
+            background-color: var(--color-rapsodia-base); /* Berenjena Profundo */
+            color: #fff;
+        }
+
+        button[name="editar"]:hover {
+            background-color: #55355E;
+        }
+
+        /* Botón Cancelar (Peligro/Negativo) */
+        button[name="cancelar"] {
+            background-color: var(--color-resaltado); /* Borgoña Rico */
+            color: #fff;
+        }
+
+        button[name="cancelar"]:hover {
             background-color: #690202;
         }
     </style>
 </head>
 <body>
-    
-{% block content %}
-<h2>Confirmar reserva</h2>
 
-<ul>
-    <li>Fecha: {{ datos.fecha }}</li>
-    <li>Hora: {{ datos.hora }}</li>
-    <li>Mesa: {{ datos.mesa }}</li>
-    <li>Personas: {{ datos.personas }}</li>
-    <li>Cliente: {{ datos.cliente }}</li>
-</ul>
+    <h2>Confirmar tu Reserva</h2>
 
-<form method="POST" action="{% url 'confirmar_reserva' %}">
-    {% csrf_token %}
-    <input type="hidden" name="mesa_id" value="{{ mesa_id }}">
-    <input type="hidden" name="fecha" value="{{ fecha }}">
-    <input type="hidden" name="hora" value="{{ hora }}">
-    <input type="hidden" name="personas" value="{{ personas }}">
-    <button type="submit" name="confirmar">Confirmar</button>
-    <button type="submit" name="editar">Editar</button>
-    <button type="submit" name="cancelar">Cancelar</button>
-</form>
-{% endblock %}
+    <div class="resumen-card">
+        <p style="font-style: italic; color: var(--color-rapsodia-base); margin-bottom: 1.5rem;">
+            Por favor, revisa que los detalles de tu reserva sean correctos antes de confirmar.
+        </p>
+        
+        <ul>
+            <li><b>Cliente:</b> <span>{{ datos.cliente }}</span></li>
+            <li><b>Fecha:</b> <span>{{ datos.fecha }}</span></li>
+            <li><b>Hora:</b> <span>{{ datos.hora }}</span></li>
+            <li><b>Personas:</b> <span>{{ datos.personas }}</span></li>
+            <li><b>Mesa:</b> <span>{{ datos.mesa }}</span> (Capacidad: {{ datos.capacidad }})</li> 
+        </ul>
 
-    {{ block.super }}
+        <form method="POST" action="{% url 'confirmar_reserva' %}" class="botonera">
+            {% csrf_token %}
+            <input type="hidden" name="mesa_id" value="{{ mesa_id }}">
+            <input type="hidden" name="fecha" value="{{ fecha }}">
+            <input type="hidden" name="hora" value="{{ hora }}">
+            <input type="hidden" name="personas" value="{{ personas }}">
+            
+            <button type="submit" name="cancelar" value="1">Cancelar</button>
+            <button type="submit" name="editar" value="1">Editar</button>
+            <button type="submit" name="confirmar" value="1">Confirmar Reserva</button>
+        </form>
+    </div>
+
 </body>
 </html>

@@ -3,8 +3,6 @@ from django import forms
 from .models import Reserva
 from django.core.exceptions import ValidationError
 
-
-
 class TimeSelectWidget(forms.Select):
     def __init__(self, *args, **kwargs):
         time_choices = []

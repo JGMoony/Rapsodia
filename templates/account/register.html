@@ -5,160 +5,277 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Registro</title>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
+    <title>Rapsodia - Registro de Cuenta</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
 
+    <style>
+        /* Definición de la Paleta de Colores de Rapsodia */
+        :root {
+            --color-rapsodia-base: #3C1B43;
+            --color-lujo-acento: #C79F5E;
+            --color-fondo-limpio: #F7F4E9;
+            --color-texto-principal: #1A1A1A; 
+            --color-texto-secundario: #6C6C6C;
+            --color-resaltado: #8B2C3F;
+        }
+
+        /* Estilos generales */
         * {
             margin: 0;
             padding: 0;
-            font-family: "OV Treasure", serif;
-            color: #262525;
+            font-family: 'Playfair Display', serif; 
+            color: var(--color-texto-principal);
+            box-sizing: border-box;
         }
 
         body {
-            background-color: #e6ddbc;
+            background-color: var(--color-fondo-limpio);
             display: grid;
             place-items: center;
-            height: 100vh;
+            min-height: 100vh; 
+            padding: 40px 20px;
         }
 
         .wrapper {
-            width: 800px;
-            height: 85vh;
+            width: 850px; 
+            height: auto;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            border: 3px solid #822626;
-            box-shadow: 0 0 30px #690202;
+            grid-template-columns: 1fr 1.2fr; 
+            border: 3px solid var(--color-rapsodia-base); 
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
             background-color: #fff;
             border-radius: 12px;
-            overflow: hidden;
         }
 
         .form {
-            padding: 2rem;
+            padding: 2.5rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
+            align-items: center; 
         }
 
+        .form-fields {
+            width: 90%;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        
         .title {
-            font-size: 32px;
-            color: #822626;
-            margin-bottom: 1rem;
+            font-family: 'Cinzel', serif; 
+            font-size: 38px;
+            color: var(--color-rapsodia-base); 
+            margin-bottom: 1.5rem;
+            text-align: center;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+            color: var(--color-rapsodia-base);
+            text-align: left;
+            margin-bottom: 5px;
+            font-size: 1.1rem;
         }
 
         input, select {
-            margin-top: 1rem;
-            padding: 0.6rem;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 1rem;
-        }
-
-        .Submit {
-            background-color: #822626;
-            color: #fff;
-            border: none;
+            width: 100%;
             padding: 0.8rem;
+            border: 1px solid var(--color-texto-secundario);
             border-radius: 6px;
             font-size: 1rem;
-            margin-top: 1.5rem;
+            box-sizing: border-box;
+        }
+        
+        .Submit {
+            background-color: var(--color-lujo-acento); 
+            color: var(--color-rapsodia-base); 
+            border: none;
+            padding: 0.9rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            margin-top: 2rem;
             cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            width: 90%; 
+            text-align: center;
         }
 
         .Submit:hover {
-            background-color: #690202;
+            background-color: #B58F54; 
+            transform: translateY(-1px);
         }
 
+        /* Contenedor de enlaces y Google */
+        .action-links {
+            width: 90%;
+            margin-top: 0.5rem; 
+            display: flex;
+            flex-direction: column;
+            align-items: center; 
+        }
+
+        /* Enlace de Iniciar Sesión (Texto) */
         .links {
-            margin-top: 1rem;
-            color: #822626;
-            text-decoration: none;
+            color: var(--color-rapsodia-base);
+            text-decoration: none; 
             font-weight: bold;
+            font-size: 0.95rem;
+            margin: 0.5rem 0;
+            transition: color 0.2s ease;
+            text-align: center;
         }
 
         .links:hover {
-            color: #690202;
+            color: var(--color-resaltado);
         }
 
+        /* Botón de Google */
+        .google-btn-container {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .google-btn-container a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            background-color: #fff;
+            border: 1px solid var(--color-texto-secundario); 
+            color: var(--color-texto-principal); 
+            font-family: 'Playfair Display', serif;
+            padding: 8px 15px;
+            font-size: 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            transition: background-color 0.2s ease;
+        }
+        
+        .google-btn-container a:hover {
+            background-color: var(--color-fondo-limpio);
+        }
+
+        .google-btn-container img {
+            height: 25px; 
+            margin-right: 15px;
+        }
+        
+        /* Banner Lateral (Berenjena Profundo) */
         .banner {
-            width: 105%;
-            height: 100%;
-            background: linear-gradient(to right, #822626, #690202);
-            padding: 2rem;
-            box-sizing: border-box;
+            background: linear-gradient(to bottom right, var(--color-rapsodia-base) 10%, #55355E 100%);
+            padding: 3rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: flex-end;
-            text-align: right;
-            overflow-y: auto;
-            border-top-right-radius: 12px;
-            border-bottom-right-radius: 12px;
+            align-items: flex-start; 
+            text-align: left;
         }
 
         .regs_text {
-            font-size: 32px;
-            line-height: 1.2;
-            color: #e6ddbc;
+            font-family: 'Cinzel', serif;
+            font-size: 40px;
+            line-height: 1.1;
+            color: var(--color-fondo-limpio); 
             margin-bottom: 1rem;
-            word-break: break-word;
+            font-weight: 700;
         }
 
         .sub_regs {
-            font-size: 16px;
-            color: #e6ddbc;
+            font-size: 1.1rem;
+            color: var(--color-fondo-limpio);
+            opacity: 0.8;
             margin-bottom: 0.5rem;
         }
-
-        a {
-            display: flex;
-            width: fit-content;
-        }
-
+        
         @media screen and (max-width: 768px) {
-    .wrapper {
-        grid-template-columns: 1fr;
-        height: auto;
-    }
+            .wrapper {
+                grid-template-columns: 1fr;
+                height: auto;
+                width: 95%;
+            }
 
-    .banner {
-        border-radius: 0;
-        align-items: center;
-        text-align: center;
-    }
+            .banner {
+                order: -1; 
+                display: none;
+            }
 
-    .form {
-        padding: 1rem;
-    }
-}
+            .form {
+                padding: 1rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="wrapper">
-        <form method="POST" class="form">
-            {% csrf_token %}
-            <h1 class="title">Registro</h1>
-            {{ form.as_p }}
-            {% if form.non_field_errors %}
-                <div style="color: red; margin-top: 10px;">
-                    {% for error in form.non_field_errors %}
-                        <p>{{ error }}</p>
-                    {% endfor %}
-                </div>
-            {% endif %}
-            <button class="Submit" type="submit">Terminar</button>
-            <a class="links" href="{% url 'login' %}">Iniciar Sesión</a>
-            <a href="{% provider_login_url 'google' %}">
-                <img src="{% static 'img/Gmail.png' %}" alt="Iniciar sesión con Google" style="height: 40px;", weight="30px">
-            </a>
-        </form>
         <div class="banner">
             <h1 class="regs_text">BIENVENIDO A RAPSODIA</h1>
-            <p class="sub_regs">El lugar perfecto para disfrutar</p>
-            <p class="sub_regs">de una buena comida</p>
+            <p class="sub_regs">Tu experiencia gastronómica de lujo te espera.</p>
+            <p class="sub_regs">Regístrate en pocos segundos y reserva tu mesa.</p>
         </div>
+        
+        <form method="POST" class="form">
+            {% csrf_token %}
+            <h1 class="title">CREAR CUENTA</h1>
+            
+            <div class="form-fields">
+                {% if form.nombre %}
+                    <label for="{{ form.nombre.id_for_label }}">Nombre:</label>
+                    {{ form.nombre }}
+                {% endif %}
+                
+                {% if form.apellido %}
+                    <label for="{{ form.apellido.id_for_label }}">Apellido:</label>
+                    {{ form.apellido }}
+                {% endif %}
+                
+                {% if form.email %}
+                    <label for="{{ form.email.id_for_label }}">Email:</label>
+                    {{ form.email }}
+                {% endif %}
+                
+                {% if form.password1 %}
+                    <label for="{{ form.password1.id_for_label }}">Contraseña:</label>
+                    {{ form.password1 }}
+                {% endif %}
+
+                {% if form.password2 %}
+                    <label for="{{ form.password2.id_for_label }}">Confirmar contraseña:</label>
+                    {{ form.password2 }}
+                {% endif %}
+                
+                {% for field in form %}
+                    {% if field.errors %}
+                        <div style="color: var(--color-resaltado); font-size: 0.9rem; margin-top: 5px;">{{ field.errors }}</div>
+                    {% endif %}
+                {% endfor %}
+
+                {% if form.non_field_errors %}
+                    <div style="color: var(--color-resaltado); margin-top: 10px; font-weight: bold; text-align: center;">
+                        {% for error in form.non_field_errors %}
+                            <p>{{ error }}</p>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+            
+            <button class="Submit" type="submit">REGISTRARME</button>
+            
+            <div class="action-links">
+                <a class="links" href="{% url 'login' %}">¿Ya tienes cuenta? Iniciar Sesión</a>
+                
+                <div class="google-btn-container">
+                    <a href="{% provider_login_url 'google' %}">
+                        <img src="{% static 'img/Gmail.png' %}" alt="Google Icon">
+                        CONTINUAR CON GOOGLE
+                    </a>
+                </div>
+            </div>
+        </form>
     </div>
 </body>
 </html>

@@ -1,42 +1,202 @@
-{% block content %}
-<h2>Mi perfil</h2>
-<a href="{% url 'editar_perfil' %}">Editar perfil</a>
-<a href="{% url 'crear_reserva' %}">Nueva reserva</a>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-co">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapsodia - Mi Perfil</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Definición de la Paleta de Colores de Rapsodia */
+        :root {
+            --color-rapsodia-base: #3C1B43;
+            --color-lujo-acento: #C79F5E;
+            --color-fondo-limpio: #F7F4E9;
+            --color-texto-principal: #1A1A1A; 
+            --color-resaltado: #8B2C3F;
+            --color-confirmacion: #93A892;
+            --color-pasada: #AFAFAF; 
+            --color-tabla-header: var(--color-rapsodia-base); 
+        }
 
-<h3>Historial de reservas</h3>
-<table>
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Mesa</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Personas</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for reserva in reservas %}
-        <tr>
-            <td>{{ reserva.id }}</td>
-            <td>{{ reserva.mesa.numero }}</td>
-            <td>{{ reserva.fecha }}</td>
-            <td>{{ reserva.hora }}</td>
-            <td>{{ reserva.personas }}</td>
-            <td>{{ reserva.estado }}</td>
-            <td>
-                {% if reserva.estado == 'activa' %}
-                    <a href="{% url 'cancelar_reserva' reserva.id %}">Cancelar</a>
-                    <a href="{% url 'editar_reserva' reserva.id %}">Editar</a>
-                {% else %}
-                    —
-                {% endif %}
-            </td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="7">No tienes reservas registradas.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endblock %}
+        body {
+            background-color: var(--color-fondo-limpio);
+            color: var(--color-texto-principal);
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ------------------ Encabezado ------------------ */
+        header {
+            background-color: var(--color-rapsodia-base);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header img {
+            height: 50px;
+            object-fit: contain;
+        }
+        
+        /* ------------------ Contenido Principal ------------------ */
+        main {
+            padding: 2rem;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--color-rapsodia-base);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        /* Enlace de Nueva Reserva (CTA) */
+        .acciones {
+            margin-bottom: 2rem;
+            text-align: right;
+        }
+
+        .btn-cta {
+            background-color: var(--color-lujo-acento);
+            color: var(--color-rapsodia-base);
+            display: inline-block;
+            text-decoration: none;
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-cta:hover {
+            background-color: #B58F54;
+        }
+
+        /* ------------------ Tabla de Reservas ------------------ */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th {
+            background-color: var(--color-tabla-header); 
+            color: var(--color-fondo-limpio);
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 1rem 0.8rem;
+        }
+
+        th, td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        tr:hover {
+            background-color: #fcfcfc;
+        }
+
+        /* ------------------ Estados de la Reserva ------------------ */
+        .estado-activa {
+            color: #4CAF50;
+            font-weight: 700;
+        }
+        .estado-cancelada {
+            color: var(--color-resaltado); 
+            font-weight: 700;
+        }
+        .estado-pasada {
+            color: var(--color-pasada);
+            font-style: italic;
+        }
+        
+        /* ------------------ Acciones de la Reserva ------------------ */
+        .acciones-reserva a {
+            color: var(--color-lujo-acento); 
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 700;
+            transition: color 0.2s ease;
+        }
+
+        .acciones-reserva a:hover {
+            color: var(--color-rapsodia-base); /* Hover a Berenjena Profundo */
+            text-decoration: underline;
+        }
+        /* CANCELAR en Borgoña Rico */
+        .acciones-reserva a[href*="cancelar"] {
+            color: var(--color-resaltado); 
+        }
+        /* ELIMINAR en Borgoña Rico */
+        .acciones-reserva a[href*="eliminar"] {
+            color: var(--color-resaltado); 
+        }
+    </style>
+</head>
+<body>
+<header>
+    <a href="{% url 'base' %}">
+        <img src="{% static 'img/logo.png' %}" alt="Logo Rapsodia">
+    </a>
+</header>
+
+<main>
+    <h2 class="page-header">Mis Reservas y Historial</h2>
+
+    <div class="acciones">
+        <a href="{% url 'crear_reserva' %}" class="btn-cta">Hacer Nueva Reserva</a>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Mesa</th>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Personas</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+            <tr>
+                <td>{{ reserva.id }}</td>
+                <td>{{ reserva.mesa.numero }}</td>
+                <td>{{ reserva.fecha }}</td>
+                <td>{{ reserva.hora }}</td>
+                <td>{{ reserva.personas }}</td>
+                <td class="estado-{{ reserva.estado }}">{{ reserva.estado|capfirst }}</td>
+                <td class="acciones-reserva">
+                    {% if reserva.estado == 'activa' %}
+                        <a href="{% url 'cancelar_reserva' reserva.id %}" style="color: var(--color-resaltado);">Cancelar</a>
+                        <a href="{% url 'editar_reserva' reserva.id %}">Editar</a>
+                    {% elif reserva.estado == 'cancelada' %}
+                        <a href="{% url 'eliminar_reserva' reserva.id %}" style="color: var(--color-texto-secundario);">Eliminar</a>
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="7" style="font-style: italic; color: var(--color-texto-secundario);">No tienes reservas registradas. ¿Por qué no haces una ahora?</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</main>
+</body>
+</html>

@@ -1,60 +1,134 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es-co">
 <head>
     <meta charset="UTF-8">
-    <title>Rapsodia</title>
+    <title>Rapsodia - Home</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
+        :root {
+            --color-rapsodia-base: #3C1B43;
+            --color-lujo-acento: #C79F5E;
+            --color-fondo-limpio: #F7F4E9;
+            --color-texto-principal: #1A1A1A;
+            --color-texto-secundario: #6C6C6C;
+            --color-resaltado: #8B2C3F;
+        }
 
         body {
-            background-color: #e6ddbc;
-            font-family: "OV Treasure", serif;
-            color: #262525;
+            background-color: var(--color-fondo-limpio);
+            color: var(--color-texto-principal);
+            font-family: 'Playfair Display', serif;
             margin: 0;
             padding: 0;
         }
 
+        header {
+            background-color: var(--color-rapsodia-base);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header img {
+            height: 50px;
+            object-fit: contain;
+        }
+        
+        .nav-panel {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-panel a {
+            color: var(--color-fondo-limpio);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 400;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+
+        .nav-panel a:hover {
+            background-color: var(--color-lujo-acento);
+            color: var(--color-rapsodia-base);
+        }
+
         .container {
             text-align: center;
-            background-color: #fff;
-            padding: 2rem;
+            background-color: #fff; 
+            padding: 3rem;
             border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            max-width: 600px;
-            margin: 2rem auto;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15); 
+            max-width: 700px;
+            margin: 3rem auto; 
         }
 
         h1 {
-            font-size: 48px;
+            font-family: 'Cinzel', serif; 
+            font-size: 3rem;
             margin-bottom: 20px;
-            color: #822626;
+            color: var(--color-rapsodia-base);
         }
 
         p {
-            font-size: 20px;
-            color: #525252;
+            font-size: 1.1rem;
+            color: var(--color-texto-secundario);
+            line-height: 1.6;
         }
 
-        a {
-            color: #822626;
+        .btn-principal {
+            display: inline-block;
+            background-color: var(--color-lujo-acento); /* Oro Antiguo */
+            color: var(--color-rapsodia-base); 
             text-decoration: none;
             font-weight: bold;
+            font-family: 'Cinzel', serif;
+            padding: 15px 30px;
+            border-radius: 6px;
+            margin-top: 25px;
+            transition: background-color 0.3s ease, transform 0.1s ease;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
         }
 
-        a:hover {
-            color: #690202;
-            text-decoration: underline;
+        .btn-principal:hover {
+            background-color: var(--color-resaltado); /* Borgoña Rico para el hover */
+            color: var(--color-fondo-limpio);
+            text-decoration: none;
+            transform: translateY(-1px);
         }
+
     </style>
 </head>
 <body>
+    <header>
+        <a href="{% url 'base' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Rapsodia">
+        </a>
+        
+        <nav class="nav-panel">
+            <a href="{% url 'crear_reserva' %}">Hacer una Reserva</a>
+            <a href="{% url 'perfil_usuario' %}">Mis Reservas</a>
+            <a href="{% url 'login' %}">Cerrar Sesión</a>
+        </nav>
+    </header>
     <div class="container">
         <h1>¡Bienvenido a Rapsodia!</h1>
-        <p>Tu sesión ha iniciado correctamente.</p>
-        <p><a href="{% url 'crear_reserva' %}">Consultar disponibilidad de mesas</a></p>
-        <p><a href="{% url 'login' %}">Cerrar sesión</a></p>
+        <p>Tu sesión ha iniciado correctamente. Te invitamos a vivir una experiencia gastronómica inigualable.</p>
+        
+        <a href="{% url 'crear_reserva' %}" class="btn-principal">
+            Consultar Disponibilidad
+        </a>
+        
         {% block content %}
         {% endblock %}
-    </div>
+        
+        </div>
 </body>
 </html>
