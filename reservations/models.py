@@ -32,10 +32,9 @@ class Reserva(models.Model):
     creada_en = models.DateTimeField(default=timezone.now)
 
     def clean(self):
-        # Validación manual de fecha y hora si vienen como string
         if isinstance(self.fecha, str):
             try:
-                self.fecha = datetime.strptime(self.fecha, "%Y-%m-%d").date()
+                self.fecha = datetime.strptime(self.fecha, "%d-%m-%Y").date()
             except ValueError:
                 raise ValidationError("Formato de fecha inválido (YYYY-MM-DD).")
 
@@ -48,7 +47,6 @@ class Reserva(models.Model):
             except ValueError:
                 raise ValidationError("Formato de hora inválido (HH:MM o HH:MM:SS).")
 
-        # Validación de capacidad
         if self.mesa_id and self.personas and self.mesa and self.personas > self.mesa.capacidad:
             raise ValidationError(
                 f"La mesa {self.mesa.numero} tiene capacidad máxima de {self.mesa.capacidad} personas."
@@ -68,12 +66,10 @@ class Reserva(models.Model):
     def save(self, *args, **kwargs):
         self.clean()
         super().save(*args, **kwargs)
-        # Actualizar disponibilidad de mesa solo si está activa
         if self.estado == 'activa' and self.mesa:
             self.mesa.disponible = False
             self.mesa.save()
 
-            # Notificación al cliente
             if self.cliente and self.cliente.email:
                 send_mail(
                     subject='Confirmación de reserva en Rapsodia',

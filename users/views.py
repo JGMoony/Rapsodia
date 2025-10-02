@@ -17,7 +17,9 @@ def registro_view(request):
             usuario.set_password(form.cleaned_data['password1'])
             usuario.save()
 
+            usuario.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, usuario)
+            
             return redirect('home')
         else:
             print(form.errors)
@@ -35,10 +37,9 @@ def login_view(request):
         if usuario:
             login(request, usuario)
             print("login exitoso")
-            # Redirige según tipo de usuario
             if usuario.is_staff or usuario.is_superuser:
                 print("usuario admin, redirigiendo a dashboard")
-                return redirect('admin_dashboard')  # nombre de tu dashboard de admin
+                return redirect('admin_dashboard') 
             else:
                 print("usuario normal, redirigiendo a home")
                 return redirect('home')
@@ -105,28 +106,22 @@ def home(request):
     return render(request, 'home.html')
 
 
-# ==============================
-# 🚀 Dashboard del administrador
-# ==============================
 @login_required
 def admin_dashboard(request):
-    # Estadísticas generales
     reservas_activas = Reserva.objects.filter(estado="activa").count()
     reservas_canceladas = Reserva.objects.filter(estado="cancelada").count()
     reservas_pasadas = Reserva.objects.filter(estado="pasada").count()
 
-    # Filtro de fechas (semana o mes)
     filtro = request.GET.get("filtro", "semana")
     hoy = now().date()
 
     if filtro == "mes":
         fecha_inicio = hoy - timedelta(days=30)
-    else:  # por defecto semana
+    else: 
         fecha_inicio = hoy - timedelta(days=7)
 
     reservas = Reserva.objects.filter(fecha__gte=fecha_inicio)
 
-    # 📊 Datos para gráfico de reservas en el tiempo
     labels = []
     data = []
     rango_fechas = [fecha_inicio + timedelta(days=i) for i in range((hoy - fecha_inicio).days + 1)]
@@ -134,16 +129,14 @@ def admin_dashboard(request):
         labels.append(dia.strftime("%d-%m"))
         data.append(reservas.filter(fecha=dia).count())
 
-    # 📊 Datos para gráfico de días más concurridos
     dias_labels = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
     dias_data = [0] * 7
 
     reservas_por_dia = reservas.values("fecha").annotate(total=Count("id"))
     for r in reservas_por_dia:
-        dia_semana = r["fecha"].weekday()  # 0=lunes, 6=domingo
+        dia_semana = r["fecha"].weekday()
         dias_data[dia_semana] += r["total"]
 
-    # Listado de mesas
     mesas = Mesa.objects.all()
 
     return render(request, "dashboard/admin_dashboard.html", {

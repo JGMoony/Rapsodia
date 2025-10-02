@@ -1,0 +1,223 @@
+{%load static%}
+{% block content %}
+<style>
+    /* Estilos adicionales para la vista de plano */
+    :root {
+        --color-rapsodia-base: #3C1B43;
+        --color-lujo-acento: #C79F5E;
+        --color-fondo-limpio: #F7F4E9;
+        --color-resaltado: #8B2C3F;
+        --color-exito: #93A892;
+        --color-en-uso: #C7B38A;
+    }
+    
+    body { 
+        background-color: var(--color-fondo-limpio);
+        color: var(--color-texto-principal);
+        font-family: 'Playfair Display', serif;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    header {
+        background-color: var(--color-rapsodia-base);
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    header img {
+        height: 50px;
+        object-fit: contain;
+    }
+    
+    .plano-contenedor {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 30px;
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .mesa-visual-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+        padding: 20px;
+    }
+
+    .mesa-card {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        width: 140px;
+        height: 140px;
+        margin: 0 auto;
+        border-radius: 50%;
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        text-decoration: none;
+        border: 3px solid var(--color-rapsodia-base);
+    }
+
+    .mesa-card:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(199, 159, 94, 0.6);
+    }
+    
+    .mesa-card span { color: inherit; }
+
+    .mesa-card .capacidad {
+        font-family: 'Playfair Display', serif;
+        font-size: 0.9rem;
+        font-weight: 400;
+    }
+
+    .estado-Libre { 
+        background-color: var(--color-exito); 
+        color: var(--color-rapsodia-base); 
+    }
+
+    .estado-Ocupada { 
+        background-color: var(--color-resaltado); 
+        color: white; 
+        border-color: var(--color-resaltado); 
+    }
+
+    .estado-Reservada { 
+        background-color: var(--color-en-uso); 
+        color: var(--color-rapsodia-base); 
+        border-style: dashed; 
+    }
+
+    .leyenda { 
+        display: flex; 
+        justify-content: center; 
+        gap: 30px; 
+        margin-bottom: 20px; 
+    }
+
+    .leyenda-item { 
+        display: flex; 
+        align-items: center; 
+        font-size: 0.95rem; 
+    }
+
+    .leyenda-color { 
+        width: 20px; 
+        height: 20px; 
+        border-radius: 4px; 
+        margin-right: 8px; 
+        border: 1px solid var(--color-rapsodia-base); 
+    }
+        
+    .btn-primary {
+        display: inline-block;
+        padding: 10px 18px;
+        border-radius: 5px;
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        
+        background-color: var(--color-lujo-acento);
+        color: var(--color-rapsodia-base);
+        border: 2px solid var(--color-lujo-acento); 
+    }
+
+    .btn-primary:hover {
+        background-color: #B58F54; 
+        color: var(--color-rapsodia-base);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-buttons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+    }
+
+    .btn-dashboard {
+        background-color: var(--color-rapsodia-base);
+        color: var(--color-fondo-limpio); /* Texto en crema/blanco */
+        border: 2px solid var(--color-rapsodia-base);
+    }
+
+    .btn-dashboard:hover {
+        background-color: var(--color-resaltado);
+        border-color: var(--color-resaltado);
+        color: white;
+    }
+
+    .btn-secondary-nav {
+        background: none;
+        color: var(--color-rapsodia-base);
+        border: 2px solid var(--color-rapsodia-base);
+    }
+
+    .btn-secondary-nav:hover {
+        background-color: var(--color-rapsodia-base);
+        color: var(--color-fondo-limpio);
+        border-color: var(--color-rapsodia-base);
+    }
+</style>
+    <header>
+        <a href="{% url 'base' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Rapsodia">
+        </a>
+    </header>
+
+<div class="plano-contenedor">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2>ESTADO OPERATIVO DE MESAS</h2>
+        <div class="nav-buttons">
+            <a href="{% url 'admin_dashboard' %}" class="btn-primary btn-dashboard">
+                &larr; Dashboard
+            </a>
+            <a href="{% url 'mesa_list' %}" class="btn-primary" style="background: none; border: 1px solid var(--color-rapsodia-base); color: var(--color-rapsodia-base);">
+                Ver/Editar Mesas
+            </a>
+        </div>
+    </div>
+
+    </div>
+
+    <div class="leyenda">
+        <div class="leyenda-item"><span class="leyenda-color" style="background-color: var(--color-exito);"></span>Libre (Disponible)</div>
+        <div class="leyenda-item"><span class="leyenda-color" style="background-color: var(--color-en-uso); border-style: dashed;"></span>Reservada (Próxima)</div>
+        <div class="leyenda-item"><span class="leyenda-color" style="background-color: var(--color-resaltado); border-color: var(--color-resaltado);"></span>Ocupada (En Uso Ahora)</div>
+    </div>
+    
+    <p style="margin-bottom: 30px; color: var(--color-rapsodia-base);">
+        Muestra el estado de las mesas en este momento ({{ now|date:"H:i" }}).
+    </p>
+
+    <div class="mesa-visual-grid">
+        {% for mesa in mesas_con_estado %}
+          <a href="{% url 'mesa_edit' mesa.id %}" 
+            class="mesa-card estado-{{ mesa.estado_actual }}">
+              <span>MESA {{ mesa.numero }}</span>
+              <span class="capacidad">Cap: {{ mesa.capacidad }}</span>
+              <span class="capacidad" style="font-weight: bold; margin-top: 5px;">
+                  {{ mesa.estado_actual|upper }}
+              </span>
+          </a>
+      {% empty %}
+          <p style="grid-column: 1 / -1; color: var(--color-resaltado);">No hay mesas configuradas.</p>
+      {% endfor %}
+    </div>
+</div>
+{% endblock %}

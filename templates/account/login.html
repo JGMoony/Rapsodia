@@ -4,134 +4,182 @@
 <html lang="es-co">
 <head>
     <meta charset="UTF-8">
-    <title>Iniciar Sesión</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapsodia - Iniciar Sesión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=OV+Treasure&display=swap');
-        * {
-            margin: 2;
-            padding: 2;
-            font-family: "OV Treasure", serif;
-            color: #262525;
+        /* Definición de la Paleta de Colores de Rapsodia */
+        :root {
+            --color-rapsodia-base: #3C1B43;
+            --color-lujo-acento: #C79F5E;
+            --color-fondo-limpio: #F7F4E9;
+            --color-texto-secundario: #6C6C6C;
+            --color-resaltado: #8B2C3F;
         }
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #e6ddbc;
+
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            min-height: 100vh;
-            justify-content: center;
-            align-items: center;
+            font-family: 'Playfair Display', serif;
+            color: var(--color-texto-principal);
+            box-sizing: border-box;
         }
-        .wrapper {
-            display: flex;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-            overflow: hidden;
-            max-width: 900px;
-            width: 100%;
-        }
-        .form {
 
-            padding: 2rem;
+        body {
+            background-color: var(--color-fondo-limpio);
+            display: grid;
+            place-items: center;
+            height: 100vh;
+        }
+
+        .wrapper {
+            width: 850px;
+            height: 70vh;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            border: 3px solid var(--color-rapsodia-base);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .form {
+            padding: 2.5rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
 
         .title {
-            font-size: 32px;
-            color: #822626;
-            margin-bottom: 1rem;
+            font-family: 'Cinzel', serif;
+            font-size: 38px;
+            color: var(--color-rapsodia-base);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form p {
+            margin: 0.5rem 0;
         }
 
         input {
-            margin-top: 1rem;
-            padding: 0.6rem;
-            border: 1px solid #ccc;
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--color-texto-secundario);
             border-radius: 6px;
             font-size: 1rem;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+            color: var(--color-rapsodia-base);
         }
 
         .Submit {
-            background-color: #822626;
-            color: #fff;
+            background-color: var(--color-lujo-acento); 
+            color: var(--color-rapsodia-base);
             border: none;
-            padding: 0.8rem;
-
+            padding: 0.9rem;
             border-radius: 6px;
-            font-size: 1rem;
-            margin-top: 1.5rem;
+            font-size: 1.1rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            margin-top: 2rem;
             cursor: pointer;
-
+            transition: background-color 0.3s ease, transform 0.1s ease;
         }
 
         .Submit:hover {
-            background-color: #690202;
+            background-color: #B58F54;
+            transform: translateY(-1px);
         }
-        .form h1 {
-            color: #822626;
-            margin-bottom: 1rem;
+        
+        .social-login-group {
+            margin-top: 1.5rem;
+            /* CAMBIO: Hacemos que ocupe todo el ancho para centrar los enlaces */
+            width: 100%; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px; /* Separación entre enlaces */
         }
-        .form button {
-            background-color: #822626;
-            color: #fff;
-            border: none;
-            padding: 0.8rem;
-            width: 100%;
-            border-radius: 6px;
-            margin-top: 1rem;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .form button:hover {
-            background-color: #690202;
-        }
+        
         .links {
-            display: block;
-            text-align: center;
-            margin-top: 1rem;
-            color: #822626;
-            text-decoration: underline;
-        }
-        .google-login {
-            margin: 1rem 0;
-            text-align: center;
-        }
-        .google-login a {
-            color: #822626;
+            color: var(--color-rapsodia-base);
+            text-decoration: none;
             font-weight: bold;
-            text-decoration: underline;
+            transition: color 0.2s ease;
+            font-size: 0.95rem;
+            /* Eliminado: align-self: flex-start; */
         }
+
+        .links:hover {
+            color: var(--color-resaltado);
+        }
+
         .banner {
-            flex: 1;
-            background: linear-gradient(rgba(130, 38, 38, 0.9), rgba(105, 2, 2, 0.9));
-            color: #fff;
-            padding: 2rem;
+            background: linear-gradient(to bottom right, var(--color-rapsodia-base) 10%, #55355E 100%);
+            padding: 3rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            text-align: center;
+            align-items: flex-start;
+            text-align: left;
         }
-        .banner h1 {
-            font-size: 2rem;
+
+        .regs_text {
+            font-family: 'Cinzel', serif;
+            font-size: 40px;
+            line-height: 1.1;
+            color: var(--color-fondo-limpio);
             margin-bottom: 1rem;
-            color: #fff;
+            font-weight: 700;
         }
-        .banner p {
-            margin: 0.5rem 0;
-            color: #fff;
+
+        .sub_regs {
+            font-size: 1.1rem;
+            color: var(--color-fondo-limpio);
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
         }
-        .error {
-            color: red;
-            margin-top: 10px;
+        
+        .google-btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+
+        .google-btn-container a {
+            display: block;
+            width: 90%;
+            padding: 5px;
+            border: 1px solid var(--color-texto-secundario);
+            border-radius: 6px;
+            text-align: center;
+            text-decoration: none;
+        }
+        
+        .google-btn-container img {
+            height: 35px;
+            vertical-align: middle;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
     <div class="wrapper">
-        <!-- Formulario -->
+        <div class="banner">
+            <h1 class="regs_text">BIENVENIDO A RAPSODIA</h1>
+            <p class="sub_regs">Tu experiencia gastronómica de lujo te espera.</p>
+            <p class="sub_regs">Reserva fácil y rápido.</p>
+        </div>
         <form method="POST" class="form">
             {% csrf_token %}
             <h1 class="title">Iniciar Sesión</h1>
@@ -139,29 +187,28 @@
             {{ form.as_p }}
             
             {% if form.non_field_errors %}
-                <div class="error">
+                <div style="color: var(--color-resaltado); margin-top: 10px; font-weight: bold;">
                     {% for error in form.non_field_errors %}
                         <p>{{ error }}</p>
                     {% endfor %}
                 </div>
             {% endif %}
             
-            <button type="submit">Ingresar</button>
+            <button class="Submit" type="submit">Ingresar a Mi Cuenta</button>
             
-            <a class="links" href="{% url 'register' %}">Registrarse</a>
-
-            <div class="google-login">
-                <h3>o</h3>
-                <a href="{% provider_login_url 'google' %}">Inicia sesión con Google</a>
+            <div class="social-login-group">
+                <a class="links" href="{% url 'account_reset_password' %}">¿Olvidaste tu contraseña?</a>
+                
+                <a class="links" href="{% url 'register' %}">¿Aún no tienes cuenta? Regístrate</a>
+            </div>
+            
+            <div class="google-btn-container">
+                <a href="{% provider_login_url 'google' %}">
+                    <img src="{% static 'img/Gmail.png' %}" alt="Google Icon">
+                    Continuar con Google
+                </a>
             </div>
         </form>
-
-        <!-- Banner lateral -->
-        <div class="banner">
-            <h1 class="regs_text">BIENVENIDO A RAPSODIA</h1>
-            <p class="sub_regs">El lugar perfecto para disfrutar</p>
-            <p class="sub_regs">de una buena comida</p>
-        </div>
     </div>
 </body>
 </html>

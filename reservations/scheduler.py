@@ -1,9 +1,9 @@
-from apscheduler.schedulers.background import BackgroundScheduler
 from django.utils import timezone
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import Reserva
 from datetime import timedelta,datetime
+from apscheduler.schedulers.background import BackgroundScheduler
 
 def enviar_recordatorios():
     ahora = timezone.now()
@@ -11,11 +11,9 @@ def enviar_recordatorios():
 
     for reserva in reservas:
         inicio = datetime.combine(reserva.fecha, reserva.hora)
-        # Convertir a aware
         inicio = timezone.make_aware(inicio, timezone.get_current_timezone())
         tiempo_restante = inicio - ahora
 
-        # Si la reserva empieza en menos de 1 hora pero todavía no empezó
         if timedelta(minutes=0) < tiempo_restante <= timedelta(hours=1):
             if reserva.cliente and reserva.cliente.email:
                 send_mail(
@@ -34,5 +32,5 @@ def enviar_recordatorios():
 
 def iniciar_scheduler():
     scheduler = BackgroundScheduler()
-    scheduler.add_job(enviar_recordatorios, "interval", minutes=30)  # revisa cada minuto
+    scheduler.add_job(enviar_recordatorios, "interval", minutes=30)
     scheduler.start()

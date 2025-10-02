@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Confirmación de Reserva en Rapsodia</title>
+    <style>
+        /* Paleta de Rapsodia para Email */
+        :root {
+            --color-rapsodia-base: #3C1B43;
+            --color-lujo-acento: #C79F5E;
+            --color-fondo-limpio: #F7F4E9;
+            --color-resaltado: #8B2C3F;
+        }
+
+        body { 
+            font-family: Arial, sans-serif; 
+            background-color: var(--color-fondo-limpio); 
+            margin: 0; 
+            padding: 0; 
+            color: var(--color-rapsodia-base);
+        }
+        /* Tabla contenedora principal */
+        .container-wrapper {
+            max-width: 600px; 
+            margin: 20px auto; 
+            background-color: #ffffff; 
+            border: 3px solid var(--color-rapsodia-base); 
+            border-radius: 8px; 
+            overflow: hidden; 
+        }
+        .header { 
+            background-color: var(--color-rapsodia-base); 
+            color: var(--color-fondo-limpio); 
+            padding: 30px; 
+            text-align: center; 
+        }
+        .header h1 { 
+            margin: 0; 
+            font-size: 28px; 
+        }
+        .content { 
+            padding: 30px; 
+            color: var(--color-rapsodia-base); 
+        }
+        .details-box { 
+            background-color: var(--color-fondo-limpio); 
+            border-left: 5px solid var(--color-lujo-acento); 
+            padding: 20px; 
+            margin-top: 20px; 
+        }
+        .details-box p { 
+            margin: 8px 0; 
+            line-height: 1.6; 
+        }
+        .footer { 
+            background-color: var(--color-lujo-acento); 
+            padding: 20px; 
+            text-align: center; 
+            font-size: 12px; 
+            color: var(--color-rapsodia-base); 
+        }
+        .btn { 
+            display: inline-block; 
+            padding: 10px 20px; 
+            background-color: var(--color-lujo-acento); 
+            color: var(--color-rapsodia-base); 
+            text-decoration: none; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            margin-top: 20px; 
+        }
+        .strong-text {
+            color: var(--color-resaltado);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
+    <tr>
+        <td align="center">
+            <div class="container-wrapper">
+                <div class="header">
+                    <h1>¡RESERVA CONFIRMADA!</h1>
+                    <p style="font-size: 16px; color: #F7F4E9;">Rapsodia - Experiencia Gastronómica de Lujo</p>
+                </div>
+                
+                <div class="content">
+                    <p style="font-size: 18px;">
+                        Estimado/a <span class="strong-text">{{ user.nombre }}</span>,
+                    </p>
+                    <p>
+                        Nos complace confirmar su reserva. Esperamos darle la bienvenida a la hora indicada.
+                    </p>
+
+                    <div class="details-box">
+                        <p style="color: var(--color-resaltado); font-weight: bold; font-size: 1.1em;">DETALLES DE SU RESERVA:</p>
+                        <p><strong>Fecha:</strong> {{ fecha_display }}</p>
+                        <p><strong>Hora:</strong> {{ hora_display }}</p>
+                        <p><strong>Mesa N°:</strong> <span class="strong-text">{{ reserva.mesa.numero }}</span> (Capacidad: {{ reserva.mesa.capacidad }})</p>
+                        <p><strong>Comensales:</strong> {{ reserva.personas }} personas</p>
+                        {% if reserva.nota %}
+                            <p><strong>Nota especial:</strong> {{ reserva.nota }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <p style="margin-top: 25px;">
+                        Puede revisar y gestionar su reserva ingresando a su perfil:
+                    </p>
+                    
+                    <p style="text-align: center;">
+                        <a href="{% url 'perfil_usuario' %}" class="btn">GESTIONAR MI RESERVA</a>
+                    </p>
+                </div>
+
+                <div class="footer">
+                    <p>&copy; {% now "Y" %} Rapsodia. Todos los derechos reservados.</p>
+                    <p style="margin-top: 5px;">Cualquier pregunta, por favor contáctenos a través de nuestro sitio web.</p>
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
