@@ -1,8 +1,12 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
-from reservations.models import Reserva
+from reservations.models import Reserva, Mesa
 from users.forms import LoginForm, RegistroForm
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
+from django.utils.timezone import now, timedelta
+import datetime
+
 
 def registro_view(request):
     form = RegistroForm(request.POST or None)
@@ -13,7 +17,9 @@ def registro_view(request):
             usuario.set_password(form.cleaned_data['password1'])
             usuario.save()
 
+            usuario.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, usuario)
+            
             return redirect('home')
         else:
             print(form.errors)
@@ -31,10 +37,9 @@ def login_view(request):
         if usuario:
             login(request, usuario)
             print("login exitoso")
-            # Redirige según tipo de usuario
             if usuario.is_staff or usuario.is_superuser:
                 print("usuario admin, redirigiendo a dashboard")
-                return redirect('admin_dashboard')  # nombre de tu dashboard de admin
+                return redirect('admin_dashboard') 
             else:
                 print("usuario normal, redirigiendo a home")
                 return redirect('home')
@@ -52,6 +57,7 @@ def logout_view(request):
 def perfil_usuario(request):
     reservas = Reserva.objects.filter(cliente=request.user).order_by("-fecha", "-hora")
     return render(request, "account/perfil.html", {"reservas": reservas})
+
 
 def editar_perfil(request):
     if not request.user.is_authenticated:
@@ -71,6 +77,7 @@ def editar_perfil(request):
         form = RegistroForm(instance=request.user)
 
     return render(request, 'account/editar_perfil.html', {'form': form})
+
 
 def editar_reserva(request, reserva_id):
     if not request.user.is_authenticated:
@@ -94,5 +101,53 @@ def editar_reserva(request, reserva_id):
 
     return render(request, 'reservations/editar_reserva.html', {'reserva': reserva})
 
+
 def base_view(request):
     return render(request, 'base.html')
+
+
+@login_required
+def admin_dashboard(request):
+    reservas_activas = Reserva.objects.filter(estado="activa").count()
+    reservas_canceladas = Reserva.objects.filter(estado="cancelada").count()
+    reservas_pasadas = Reserva.objects.filter(estado="pasada").count()
+
+    filtro = request.GET.get("filtro", "semana")
+    hoy = now().date()
+
+    if filtro == "mes":
+        fecha_inicio = hoy - timedelta(days=30)
+    else: 
+        fecha_inicio = hoy - timedelta(days=7)
+
+    reservas = Reserva.objects.filter(fecha__gte=fecha_inicio)
+
+    labels = []
+    data = []
+    rango_fechas = [fecha_inicio + timedelta(days=i) for i in range((hoy - fecha_inicio).days + 1)]
+    for dia in rango_fechas:
+        labels.append(dia.strftime("%d-%m"))
+        data.append(reservas.filter(fecha=dia).count())
+
+    dias_labels = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado", "Domingo"]
+    dias_data = [0] * 7
+
+    reservas_por_dia = reservas.values("fecha").annotate(total=Count("id"))
+    for r in reservas_por_dia:
+        dia_semana = r["fecha"].weekday()
+        dias_data[dia_semana] += r["total"]
+
+    mesas = Mesa.objects.all()
+
+    return render(request, "dashboard/admin_dashboard.html", {
+        "reservas_activas": reservas_activas,
+        "reservas_canceladas": reservas_canceladas,
+        "reservas_pasadas": reservas_pasadas,
+        "labels": labels,
+        "data": data,
+        "dias_labels": dias_labels,
+        "dias_data": dias_data,
+        "reservas": reservas,
+        "mesas": mesas,
+        "filtro": filtro,
+    })

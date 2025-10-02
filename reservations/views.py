@@ -9,11 +9,16 @@ from django.utils.timezone import now
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
 from django.urls import reverse_lazy
 from django.core.exceptions import ValidationError
+# Importaciones necesarias para el envío de correo
+from django.core.mail import EmailMessage 
+from django.template.loader import render_to_string
+# Fin de importaciones de correo
 from .forms import EditarReservaForm, ReservaForm, DisponibilidadForm
 from users.forms import ProfileForm 
 from .models import Mesa, Reserva
 from users.models import User
 import json
+from calendar import month_name
 
 
 @login_required
@@ -135,6 +140,32 @@ def confirmar_reserva(request):
                     personas=personas,
                     cliente=cliente
                 )
+
+                if cliente and cliente.email:
+                    try:
+                        contexto_email = {
+                            'reserva': reserva,
+                            'user': cliente,
+                            'fecha_display': reserva.fecha.strftime('%d de %B de %Y'),
+                            'hora_display': reserva.hora.strftime('%H:%M'),
+                        }
+                        
+                        html_content = render_to_string('reservations/email/confirmacion_reserva.html', contexto_email)
+                        
+                        email = EmailMessage(
+                            f'¡Reserva Confirmada en Rapsodia! - Mesa {reserva.mesa.numero}',
+                            html_content,
+                            None,
+                            [cliente.email] 
+                        )
+                        email.content_subtype = "html"
+                        email.send()
+                        
+                    except Exception as e:
+                        print(f"Error al enviar correo de confirmación para {cliente.email}: {e}")
+
+
+
             except ValidationError as e:
                 messages.error(request, "No fue posible crear la reserva: " + "; ".join(e.messages))
                 return redirect("disponibilidad_y_reserva")
@@ -245,40 +276,102 @@ def eliminar_reserva(request, reserva_id):
 def admin_dashboard(request):
     clientes = User.objects.all()
     mesas = Mesa.objects.all()
+    
     reservas = Reserva.objects.all().order_by("-fecha", "-hora")
 
     filtro = request.GET.get("filtro", "semana")
+    mes = request.GET.get("mes") 
     hoy = now()
+
+    if mes:
+        reservas = reservas.filter(fecha__month=mes)
 
     if filtro == "semana":
         inicio = hoy - timedelta(days=7)
-        data = reservas.filter(fecha__gte=inicio).extra({'day': "date(fecha)"}).values("day").annotate(total=Count("id"))
+        data = (
+            reservas.filter(fecha__gte=inicio)
+            .extra({"day": "date(fecha)"})
+            .values("day")
+            .annotate(total=Count("id"))
+        )
         labels = [str(d["day"]) for d in data]
+        values = [d["total"] for d in data]
     else:
         inicio = hoy - timedelta(days=30)
-        data = reservas.filter(fecha__gte=inicio).extra({'month': "strftime('%%m', fecha)"}).values("month").annotate(total=Count("id"))
+        data = (
+            reservas.filter(fecha__gte=inicio)
+            .extra({"month": "strftime('%%m', fecha)"})
+            .values("month")
+            .annotate(total=Count("id"))
+        )
         labels = [f"Mes {d['month']}" for d in data]
+        values = [d["total"] for d in data]
 
-    values = [d["total"] for d in data]
+    dias_semana = (
+        reservas.extra({"dow": "strftime('%%w', fecha)"})
+        .values("dow")
+        .annotate(total=Count("id"))
+        .order_by("dow")
+    )
+
+    nombres_dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+    dias_dict = {i: 0 for i in range(7)}
+    for d in dias_semana:
+        dias_dict[int(d["dow"])] = d["total"]
+
+    dias_labels = [nombres_dias[i] for i in range(7)]
+    dias_counts = [dias_dict[i] for i in range(7)]
+
+    meses_disponibles = (
+        Reserva.objects.dates("fecha", "month")
+        .distinct()
+        .values_list("fecha__month", flat=True)
+    )
+
+    MESES_ES = [
+        "", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+        "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ]
+
+    meses_contexto = [
+        {"mes": m, "nombre": MESES_ES[m]} for m in sorted(set(meses_disponibles))
+    ]
+
+    mes_seleccionado_int = int(mes) if mes and mes.isdigit() else None
+    
+    if mes_seleccionado_int and 1 <= mes_seleccionado_int <= 12:
+        nombre_mes_seleccionado = MESES_ES[mes_seleccionado_int]
+    else:
+        nombre_mes_seleccionado = "TODAS" 
 
     context = {
         "clientes": clientes,
         "mesas": mesas,
         "reservas": reservas,
-        "labels": json.dumps(labels),   
-        "data": json.dumps(values),     
+        "labels": json.dumps(labels if labels else []),
+        "data": json.dumps(values if values else []),
         "filtro": filtro,
-        "reservas_activas": reservas.filter(estado="activa").count(),
-        "reservas_canceladas": reservas.filter(estado="cancelada").count(),
-        "reservas_pasadas": reservas.filter(estado="pasada").count(),
+        
+        "reservas_activas": reservas.filter(estado__iexact="activa").count(),
+        "reservas_canceladas": reservas.filter(estado__iexact="cancelada").count(),
+        "reservas_pasadas": reservas.filter(estado__iexact="pasada").count(),
+        
+        "dias_labels": json.dumps(dias_labels),
+        "dias_counts": json.dumps(dias_counts),
+        "meses_disponibles": meses_contexto,
+        "mes_seleccionado": mes_seleccionado_int,
+        "nombre_mes_seleccionado": nombre_mes_seleccionado,
     }
     return render(request, "reservations/admin_dashboard.html", context)
 
-
 class MesaListView(ListView):
+    """
+    Vista CRUD: Muestra el listado simple de mesas para Editar/Eliminar.
+    Ahora usa la plantilla 'mesa_list_crud.html'
+    """
     model = Mesa
-    template_name = "reservations/mesa_list.html"
-
+    template_name = "reservations/mesa_list_crud.html" 
+    context_object_name = "mesas"
 
 class MesaCreateView(CreateView):
     model = Mesa
@@ -286,13 +379,11 @@ class MesaCreateView(CreateView):
     template_name = "reservations/mesa_form.html"
     success_url = reverse_lazy("mesa_list")
 
-
 class MesaUpdateView(UpdateView):
     model = Mesa
     fields = ["numero", "capacidad", "disponible"]
     template_name = "reservations/mesa_form.html"
     success_url = reverse_lazy("mesa_list")
-
 
 class MesaDeleteView(DeleteView):
     model = Mesa
@@ -303,3 +394,42 @@ class MesaDeleteView(DeleteView):
         print("kwargs:", kwargs)
         return super().get(request, *args, **kwargs)
 
+@user_passes_test(lambda u: u.is_staff)
+def mesa_plano_view(request):
+    
+    mesas = Mesa.objects.all().order_by('numero')
+    
+    current_time = now()
+    DURACION_RESERVA = timedelta(hours=1, minutes=30) 
+    
+    for mesa in mesas:
+        mesa.estado_actual = 'Libre'
+        
+        reservas_hoy = Reserva.objects.filter(
+            mesa=mesa,
+            fecha=current_time.date(),
+            estado__iexact='activa'
+        ).order_by('hora')
+        
+        for reserva in reservas_hoy:
+            reserva_start = current_time.tzinfo.localize(
+                datetime.combine(reserva.fecha, reserva.hora)
+            )
+            reserva_end = reserva_start + DURACION_RESERVA
+            
+            if reserva_start <= current_time < reserva_end:
+                mesa.estado_actual = 'Ocupada'
+                mesa.reserva_en_curso = reserva
+                break
+            
+            elif current_time < reserva_start < current_time + timedelta(hours=2):
+                if mesa.estado_actual == 'Libre': 
+                    mesa.estado_actual = 'Reservada'
+                    mesa.reserva_proxima = reserva
+            
+
+    context = {
+        'mesas_con_estado': mesas,
+        'now': current_time,
+    }
+    return render(request, 'reservations/mesa_plano.html', context)

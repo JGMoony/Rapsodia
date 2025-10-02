@@ -11,17 +11,17 @@
     <style>
         /* Definición de la Paleta de Colores de Rapsodia */
         :root {
-            --color-rapsodia-base: #3C1B43; /* Berenjena Profundo (Texto Principal, Fondo de Banner) */
-            --color-lujo-acento: #C79F5E;  /* Oro Antiguo (Botón Principal) */
-            --color-fondo-limpio: #F7F4E9;  /* Crema de Vainilla (Fondo de Body, Texto de Banner) */
-            --color-texto-secundario: #6C6C6C; /* Gris para hints */
-            --color-resaltado: #8B2C3F;     /* Borgoña Rico (Hover de botones) */
+            --color-rapsodia-base: #3C1B43;
+            --color-lujo-acento: #C79F5E;
+            --color-fondo-limpio: #F7F4E9;
+            --color-texto-secundario: #6C6C6C;
+            --color-resaltado: #8B2C3F;
         }
 
         * {
             margin: 0;
             padding: 0;
-            font-family: 'Playfair Display', serif; /* Fuente principal del cuerpo */
+            font-family: 'Playfair Display', serif;
             color: var(--color-texto-principal);
             box-sizing: border-box;
         }
@@ -34,11 +34,11 @@
         }
 
         .wrapper {
-            width: 850px; /* Un poco más ancho para el lujo */
+            width: 850px;
             height: 70vh;
             display: grid;
-            grid-template-columns: 1.2fr 1fr; /* Formulario un poco más ancho que el banner */
-            border: 3px solid var(--color-rapsodia-base); /* Borde Berenjena Profundo */
+            grid-template-columns: 1.2fr 1fr;
+            border: 3px solid var(--color-rapsodia-base);
             box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
             background-color: #fff;
             border-radius: 12px;
@@ -53,14 +53,13 @@
         }
 
         .title {
-            font-family: 'Cinzel', serif; /* Título en Cinzel */
+            font-family: 'Cinzel', serif;
             font-size: 38px;
-            color: var(--color-rapsodia-base); /* Berenjena Profundo */
+            color: var(--color-rapsodia-base);
             margin-bottom: 1.5rem;
             text-align: center;
         }
 
-        /* Estilo para los campos de formulario generados por form.as_p */
         .form p {
             margin: 0.5rem 0;
         }
@@ -83,9 +82,8 @@
         }
 
         .Submit {
-            /* Botón principal en Oro Antiguo */
             background-color: var(--color-lujo-acento); 
-            color: var(--color-rapsodia-base); /* Texto Berenjena */
+            color: var(--color-rapsodia-base);
             border: none;
             padding: 0.9rem;
             border-radius: 6px;
@@ -98,38 +96,40 @@
         }
 
         .Submit:hover {
-            background-color: #B58F54; /* Tono más suave de Oro */
+            background-color: #B58F54;
             transform: translateY(-1px);
         }
         
         .social-login-group {
             margin-top: 1.5rem;
+            /* CAMBIO: Hacemos que ocupe todo el ancho para centrar los enlaces */
+            width: 100%; 
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: space-between;
+            gap: 10px; /* Separación entre enlaces */
         }
-
+        
         .links {
             color: var(--color-rapsodia-base);
             text-decoration: none;
             font-weight: bold;
             transition: color 0.2s ease;
             font-size: 0.95rem;
-            align-self: flex-start; /* Alineación a la izquierda */
+            /* Eliminado: align-self: flex-start; */
         }
 
         .links:hover {
-            color: var(--color-resaltado); /* Hover a Borgoña Rico */
+            color: var(--color-resaltado);
         }
 
         .banner {
-            /* Degradado de Berenjena Profundo */
             background: linear-gradient(to bottom right, var(--color-rapsodia-base) 10%, #55355E 100%);
             padding: 3rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            align-items: flex-start; /* Alineamos a la izquierda para un look más moderno */
+            align-items: flex-start;
             text-align: left;
         }
 
@@ -137,7 +137,7 @@
             font-family: 'Cinzel', serif;
             font-size: 40px;
             line-height: 1.1;
-            color: var(--color-fondo-limpio); /* Texto en Crema de Vainilla */
+            color: var(--color-fondo-limpio);
             margin-bottom: 1rem;
             font-weight: 700;
         }
@@ -167,7 +167,7 @@
         }
         
         .google-btn-container img {
-            height: 35px; /* Tamaño ajustado para la elegancia */
+            height: 35px;
             vertical-align: middle;
             margin-right: 10px;
         }
@@ -197,6 +197,8 @@
             <button class="Submit" type="submit">Ingresar a Mi Cuenta</button>
             
             <div class="social-login-group">
+                <a class="links" href="{% url 'account_reset_password' %}">¿Olvidaste tu contraseña?</a>
+                
                 <a class="links" href="{% url 'register' %}">¿Aún no tienes cuenta? Regístrate</a>
             </div>
             
