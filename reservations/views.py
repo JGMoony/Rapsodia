@@ -10,6 +10,7 @@ from .forms import EditarReservaForm, ReservaForm, DisponibilidadForm
 from .models import Mesa, Reserva
 from users.models import User
 import json
+from calendar import month_name
 
 
 # ------------------------------
@@ -158,31 +159,82 @@ def admin_dashboard(request):
     mesas = Mesa.objects.all()
     reservas = Reserva.objects.all().order_by("-fecha", "-hora")
 
-    # Filtro (semana o mes)
     filtro = request.GET.get("filtro", "semana")
+    mes = request.GET.get("mes")  # 👈 filtro por mes
     hoy = now()
 
+    # --- Filtro de mes ---
+    if mes:
+        reservas = reservas.filter(fecha__month=mes)
+
+    # --- Gráfica principal: reservas en el tiempo ---
     if filtro == "semana":
         inicio = hoy - timedelta(days=7)
-        data = reservas.filter(fecha__gte=inicio).extra({'day': "date(fecha)"}).values("day").annotate(total=Count("id"))
+        data = (
+            reservas.filter(fecha__gte=inicio)
+            .extra({"day": "date(fecha)"})
+            .values("day")
+            .annotate(total=Count("id"))
+        )
         labels = [str(d["day"]) for d in data]
+        values = [d["total"] for d in data]
     else:
         inicio = hoy - timedelta(days=30)
-        data = reservas.filter(fecha__gte=inicio).extra({'month': "strftime('%%m', fecha)"}).values("month").annotate(total=Count("id"))
+        data = (
+            reservas.filter(fecha__gte=inicio)
+            .extra({"month": "strftime('%%m', fecha)"})
+            .values("month")
+            .annotate(total=Count("id"))
+        )
         labels = [f"Mes {d['month']}" for d in data]
+        values = [d["total"] for d in data]
 
-    values = [d["total"] for d in data]
+    # --- Días más concurridos ---
+    dias_semana = (
+        reservas.extra({"dow": "strftime('%%w', fecha)"})
+        .values("dow")
+        .annotate(total=Count("id"))
+        .order_by("dow")
+    )
+
+    nombres_dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+    dias_dict = {i: 0 for i in range(7)}
+    for d in dias_semana:
+        dias_dict[int(d["dow"])] = d["total"]
+
+    dias_labels = [nombres_dias[i] for i in range(7)]
+    dias_counts = [dias_dict[i] for i in range(7)]
+
+    # --- Meses disponibles para el select ---
+    meses_disponibles = (
+        Reserva.objects.dates("fecha", "month")
+        .distinct()
+        .values_list("fecha__month", flat=True)
+    )
+
+    MESES_ES = [
+    "", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+                 ]
+
+    meses_contexto = [
+        {"mes": m, "nombre": MESES_ES[m]} for m in sorted(set(meses_disponibles))
+    ]
 
     context = {
         "clientes": clientes,
         "mesas": mesas,
         "reservas": reservas,
-        "labels": json.dumps(labels),   # 👈 Listo para JS
-        "data": json.dumps(values),     # 👈 Listo para JS
+        "labels": json.dumps(labels if labels else []),
+        "data": json.dumps(values if values else []),
         "filtro": filtro,
         "reservas_activas": reservas.filter(estado="activa").count(),
         "reservas_canceladas": reservas.filter(estado="cancelada").count(),
         "reservas_pasadas": reservas.filter(estado="pasada").count(),
+        "dias_labels": json.dumps(dias_labels),
+        "dias_counts": json.dumps(dias_counts),
+        "meses_disponibles": meses_contexto,
+        "mes_seleccionado": int(mes) if mes else None,
     }
     return render(request, "reservations/admin_dashboard.html", context)
 # ------------------------------

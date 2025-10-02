@@ -13,7 +13,7 @@
     th { background: #f5f5f5; }
     .stats { display: flex; gap: 20px; margin-bottom: 20px; }
     .stat-box { padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 5px; }
-    .chart-container { width: 80%; margin: auto; }
+    .chart-container { width: 80%; margin: 30px auto; }
     .filter-form { text-align: center; margin-bottom: 20px; }
     a { color: #822626; text-decoration: none; font-weight: bold; }
     a:hover { color: #690202; text-decoration: underline; }
@@ -42,9 +42,34 @@
     </form>
   </div>
 
-  <!-- Gráfico -->
+  <!-- Filtro por mes -->
+{% if filtro == "mes" %}
+<div class="filter-form">
+  <form method="get">
+    <input type="hidden" name="filtro" value="mes">
+    <label for="mes">Filtrar por mes:</label>
+    <select name="mes" id="mes" onchange="this.form.submit()">
+      <option value="">-- Seleccionar mes --</option>
+      {% for m in meses_disponibles %}
+        <option value="{{ m.mes }}" {% if mes_seleccionado == m.mes %}selected{% endif %}>
+          {{ m.nombre }}   <!-- 👈 ya llega en español -->
+        </option>
+      {% endfor %}
+    </select>
+  </form>
+</div>
+{% endif %}
+
+  <!-- Gráfico de reservas -->
   <div class="chart-container">
+    <h2>Reservas en el tiempo</h2>
     <canvas id="reservasChart"></canvas>
+  </div>
+
+  <!-- Gráfico de días más concurridos -->
+  <div class="chart-container">
+    <h2>Días más concurridos</h2>
+    <canvas id="diasConcurridosChart"></canvas>
   </div>
 
   <!-- Listado de reservas -->
@@ -62,7 +87,7 @@
     <tbody>
       {% for reserva in reservas %}
       <tr>
-        <td>{{ reserva.cliente.username }}</td>
+        <td>{{ reserva.cliente}}</td>
         <td>{{ reserva.mesa.numero }}</td>
         <td>{{ reserva.fecha }}</td>
         <td>{{ reserva.hora }}</td>
@@ -105,14 +130,21 @@
     </tbody>
   </table>
 
-  <!-- Script del gráfico -->
-<script>
-  const ctx = document.getElementById('reservasChart').getContext('2d');
+  <!-- Scripts de las gráficas -->
+ <script>
+  // Traducción de días al español
+  const diasEspanol = {
+    "Monday": "Lunes", "Tuesday": "Martes", "Wednesday": "Miércoles",
+    "Thursday": "Jueves", "Friday": "Viernes", "Saturday": "Sábado", "Sunday": "Domingo"
+  };
 
+  // Gráfico de reservas en el tiempo
+  const ctx = document.getElementById('reservasChart').getContext('2d');
+  let labelsOriginal = JSON.parse('{{ labels|escapejs }}'); // 👈 ya debe venir en español desde views
   new Chart(ctx, {
     type: 'line',
     data: {
-      labels: JSON.parse('{{ labels|escapejs }}'),
+      labels: labelsOriginal,
       datasets: [{
         label: 'Reservas',
         data: JSON.parse('{{ data|escapejs }}'),
@@ -129,6 +161,32 @@
       }
     }
   });
+
+  // Gráfico de días más concurridos
+  const ctxDias = document.getElementById('diasConcurridosChart').getContext('2d');
+  let diasOriginal = JSON.parse('{{ dias_labels|escapejs }}');
+  let diasTraducidos = diasOriginal.map(d => diasEspanol[d] || d);
+
+  new Chart(ctxDias, {
+    type: 'bar',
+    data: {
+      labels: diasTraducidos,  
+      datasets: [{
+        label: 'Número de Reservas',
+        data: JSON.parse('{{ dias_counts|escapejs }}'),
+        backgroundColor: 'rgba(130, 38, 38, 0.7)',
+        borderColor: 'rgba(130, 38, 38, 1)',
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        y: { beginAtZero: true }
+      }
+    }
+  });
 </script>
+
 </body>
 </html>
