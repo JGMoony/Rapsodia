@@ -281,34 +281,37 @@ def admin_dashboard(request):
 
     filtro = request.GET.get("filtro", "semana")
     mes = request.GET.get("mes") 
-    hoy = now()
+    hoy = now().date() # Usamos .date() para comparar solo fechas
 
-    if mes:
-        reservas = reservas.filter(fecha__month=mes)
+    if mes and mes.isdigit():
+        reservas = reservas.filter(fecha__month=int(mes))
 
     if filtro == "semana":
         inicio = hoy - timedelta(days=7)
+        # --- CAMBIO 1: Usar TruncDate en lugar de .extra() para agrupar por día. Es compatible con todas las bases de datos.
         data = (
             reservas.filter(fecha__gte=inicio)
-            .extra({"day": "date(fecha)"})
+            .annotate(day=TruncDate('fecha'))
             .values("day")
             .annotate(total=Count("id"))
+            .order_by("day")
         )
-        labels = [str(d["day"]) for d in data]
+        labels = [d["day"].strftime("%Y-%m-%d") for d in data]
         values = [d["total"] for d in data]
-    else:
-        inicio = hoy - timedelta(days=30)
+    else: # filtro == "mes" o cualquier otro valor
+        # --- CAMBIO 2: Usar Extract en lugar de .extra() para agrupar por mes.
         data = (
-            reservas.filter(fecha__gte=inicio)
-            .extra({"month": "strftime('%%m', fecha)"})
+            reservas.annotate(month=Extract('fecha', 'month'))
             .values("month")
             .annotate(total=Count("id"))
+            .order_by("month")
         )
-        labels = [f"Mes {d['month']}" for d in data]
+        labels = [f"Mes {month_name[d['month']]}" for d in data]
         values = [d["total"] for d in data]
-
+        
+    # --- CAMBIO 3: Usar Extract para el día de la semana. Esta es la corrección principal de tu error.
     dias_semana = (
-        reservas.extra({"dow": "strftime('%%w', fecha)"})
+        reservas.annotate(dow=Extract('fecha', 'week_day'))
         .values("dow")
         .annotate(total=Count("id"))
         .order_by("dow")
@@ -317,7 +320,11 @@ def admin_dashboard(request):
     nombres_dias = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
     dias_dict = {i: 0 for i in range(7)}
     for d in dias_semana:
-        dias_dict[int(d["dow"])] = d["total"]
+        # --- CAMBIO 4: Ajustar el índice para el día de la semana (muy importante).
+        # Extract('week_day') devuelve Domingo=1, Lunes=2, etc.
+        # Lo ajustamos restando 1 para que coincida con nuestro diccionario (Domingo=0, Lunes=1).
+        dia_index = int(d["dow"]) - 1
+        dias_dict[dia_index] = d["total"]
 
     dias_labels = [nombres_dias[i] for i in range(7)]
     dias_counts = [dias_dict[i] for i in range(7)]
