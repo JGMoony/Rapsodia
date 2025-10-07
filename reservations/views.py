@@ -212,9 +212,9 @@ def confirmar_reserva(request):
             return render(request, "reservations/availability.html", {"form": form})
 
         elif request.POST.get("cancelar") == "1":
-            return redirect("disponibilidad_y_reserva")
+            return redirect("crear_reserva")
 
-    return redirect("disponibilidad_y_reserva")
+    return redirect("crear_reserva")
 
 
 @login_required

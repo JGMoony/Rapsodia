@@ -148,7 +148,7 @@
 </head>
 <body>
 <header>
-    <a href="{% url 'base' %}">
+    <a href="{% url 'home' %}">
         <img src="{% static 'img/logo.png' %}" alt="Logo Rapsodia">
     </a>
 </header>
@@ -187,8 +187,6 @@
                         <a href="{% url 'editar_reserva' reserva.id %}">Editar</a>
                     {% elif reserva.estado == 'cancelada' %}
                         <a href="{% url 'eliminar_reserva' reserva.id %}" style="color: var(--color-texto-secundario);">Eliminar</a>
-                    {% else %}
-                        —
                     {% endif %}
                 </td>
             </tr>
