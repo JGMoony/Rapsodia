@@ -108,27 +108,19 @@
 </head>
 <body>
     <header>
-        <a href="{% url 'base' %}">
+        <a href="{% url 'home' %}">
             <img src="{% static 'img/logo.png' %}" alt="Logo Rapsodia">
         </a>
         
         <nav class="nav-panel">
             <a href="{% url 'crear_reserva' %}">Hacer una Reserva</a>
             <a href="{% url 'perfil_usuario' %}">Mis Reservas</a>
-            <a href="{% url 'login' %}">Cerrar Sesión</a>
+            <a href="{% url 'logout' %}">Cerrar Sesión</a>
         </nav>
     </header>
     <div class="container">
-        <h1>¡Bienvenido a Rapsodia!</h1>
-        <p>Tu sesión ha iniciado correctamente. Te invitamos a vivir una experiencia gastronómica inigualable.</p>
-        
-        <a href="{% url 'crear_reserva' %}" class="btn-principal">
-            Consultar Disponibilidad
-        </a>
-        
         {% block content %}
         {% endblock %}
-        
-        </div>
+    </div>
 </body>
 </html>

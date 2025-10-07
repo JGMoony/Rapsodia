@@ -1,0 +1,1 @@
+web: gunicorn Rapsodia.wsgi --log-file -

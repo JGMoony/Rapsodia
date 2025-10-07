@@ -1,5 +1,10 @@
-db.sqlite3
-__pycache__/
-*.pyc
+# .gitignore
 *.log
+*.pot
+*.pyc
+__pycache__/
+local_settings.py
+db.sqlite3
 .env
+/static
+/staticfiles

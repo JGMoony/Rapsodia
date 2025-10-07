@@ -19,13 +19,11 @@ def registro_view(request):
 
             usuario.backend = 'django.contrib.auth.backends.ModelBackend'
             login(request, usuario)
-            
             return redirect('home')
         else:
             print(form.errors)
 
     return render(request, 'account/register.html', {'form': form})
-
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -58,7 +56,7 @@ def perfil_usuario(request):
     reservas = Reserva.objects.filter(cliente=request.user).order_by("-fecha", "-hora")
     return render(request, "account/perfil.html", {"reservas": reservas})
 
-
+@login_required
 def editar_perfil(request):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -78,7 +76,7 @@ def editar_perfil(request):
 
     return render(request, 'account/editar_perfil.html', {'form': form})
 
-
+@login_required
 def editar_reserva(request, reserva_id):
     if not request.user.is_authenticated:
         return redirect('login')
@@ -101,7 +99,7 @@ def editar_reserva(request, reserva_id):
 
     return render(request, 'reservations/editar_reserva.html', {'reserva': reserva})
 
-
+@login_required
 def home(request):
     return render(request, 'home.html')
 
