@@ -148,3 +148,5 @@ LOGGING = {
         'level': 'DEBUG',
     },
 }
+
+# Forzando un nuevo build para Heroku - 06 Oct 2025
