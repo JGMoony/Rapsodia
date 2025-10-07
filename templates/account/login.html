@@ -1,180 +1,214 @@
+{% load static %}
+{% load socialaccount %}
 <!DOCTYPE html>
 <html lang="es-co">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Rapsodia - Iniciar Sesión</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
     <style>
-        *{
-            margin:0;
-            padding:0;
-            font-family:Arial, Helvetica, sans-serif;
-            color:#fff;
+        /* Definición de la Paleta de Colores de Rapsodia */
+        :root {
+            --color-rapsodia-base: #3C1B43;
+            --color-lujo-acento: #C79F5E;
+            --color-fondo-limpio: #F7F4E9;
+            --color-texto-secundario: #6C6C6C;
+            --color-resaltado: #8B2C3F;
         }
 
-        body{
-            width:100vw;
-            height:100vh;
-            background:#081b29;
-            display:grid;
-            justify-content:center;
-            align-content:center;
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: 'Playfair Display', serif;
+            color: var(--color-texto-principal);
+            box-sizing: border-box;
         }
 
-        ::-webkit-input-placeholder{
-            color:#eee;
+        body {
+            background-color: var(--color-fondo-limpio);
+            display: grid;
+            place-items: center;
+            height: 100vh;
+        }
+
+        .wrapper {
+            width: 850px;
+            height: 70vh;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            border: 3px solid var(--color-rapsodia-base);
+            box-shadow: 0 0 40px rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .form {
+            padding: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .title {
+            font-family: 'Cinzel', serif;
+            font-size: 38px;
+            color: var(--color-rapsodia-base);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .form p {
+            margin: 0.5rem 0;
+        }
+
+        input {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid var(--color-texto-secundario);
+            border-radius: 6px;
+            font-size: 1rem;
+            margin-top: 5px;
+            box-sizing: border-box;
         }
         
-        .wrapper{
-            position:relative;
-            width:800px;
-            height:65vh;
-            display:grid;
-            grid-template-columns:1fr 1fr;
-            border:3px solid #00ffff;
-            box-shadow:0 0 50px 0 #00a6bc;
+        label {
+            display: block;
+            margin-top: 1rem;
+            font-weight: bold;
+            color: var(--color-rapsodia-base);
         }
 
-        .form{
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:center;
+        .Submit {
+            background-color: var(--color-lujo-acento); 
+            color: var(--color-rapsodia-base);
+            border: none;
+            padding: 0.9rem;
+            border-radius: 6px;
+            font-size: 1.1rem;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            margin-top: 2rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.1s ease;
         }
 
-        .title{
-            font-size:35px;
+        .Submit:hover {
+            background-color: #B58F54;
+            transform: translateY(-1px);
+        }
+        
+        .social-login-group {
+            margin-top: 1.5rem;
+            /* CAMBIO: Hacemos que ocupe todo el ancho para centrar los enlaces */
+            width: 100%; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px; /* Separación entre enlaces */
+        }
+        
+        .links {
+            color: var(--color-rapsodia-base);
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.2s ease;
+            font-size: 0.95rem;
+            /* Eliminado: align-self: flex-start; */
         }
 
-        .inp{
-            padding-bottom:10px;
-            border-bottom:2px solid #eee;
+        .links:hover {
+            color: var(--color-resaltado);
         }
 
-        .input{
-            border:none;
-            outline:none;
-            background:none;
-            width:260px;
-            margin-top:40px;
-            padding-right:10px;
-            font-size:17px;
-            color:#0ef;
+        .banner {
+            background: linear-gradient(to bottom right, var(--color-rapsodia-base) 10%, #55355E 100%);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            text-align: left;
         }
 
-        .Submit{
-            border:none;
-            outline:none;
-            width:288px;
-            margin-top:25px;
-            padding:10px 0;
-            font-size:20px;
-            border-radius:40px;
-            letter-spacing:1px;
-            cursor:pointer;
-            background:linear-gradient(45deg,#0ef,#3a30fa);
+        .regs_text {
+            font-family: 'Cinzel', serif;
+            font-size: 40px;
+            line-height: 1.1;
+            color: var(--color-fondo-limpio);
+            margin-bottom: 1rem;
+            font-weight: 700;
         }
 
-        .social{
-            margin-top:30px;
-            display:flex;
+        .sub_regs {
+            font-size: 1.1rem;
+            color: var(--color-fondo-limpio);
+            opacity: 0.8;
+            margin-bottom: 0.5rem;
+        }
+        
+        .google-btn-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 1rem;
         }
 
-        .social div{
-            width:120px;
-            border-radius:5px;
-            padding:2px 3px 2px 6px;
-            background-color:#1630dc;
-            color:#eee;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            margin-right:8px;
+        .google-btn-container a {
+            display: block;
+            width: 90%;
+            padding: 5px;
+            border: 1px solid var(--color-texto-secundario);
+            border-radius: 6px;
+            text-align: center;
+            text-decoration: none;
         }
-
-        .social div:hover{
-            background-color:#2ac3ffce;
-        }
-
-        .logo{
-            padding-top:8px;
-            margin-right:15px;
-            margin-bottom:10px;
-            width:22px;
-            align-items:center;
-            display:flex;
-        }
-
-        .footer{
-            margin-top:10px;
-            letter-spacing:0.5px;
-            font-size:14px;
-        }
-
-        .link{
-            color:#0ef;
-            text-decoration:none;
-        }
-
-        .links{
-            color:#0ef;
-            text-decoration:none;
-            font-size:10px;
-            align-self:center;
-        }
-
-        .banner{
-            position:absolute;
-            top:0;
-            right:0;
-            width:450px;
-            height:100%;
-            background:linear-gradient(to right,#0ef,#3a30fa);
-            clip-path:polygon(0 0,100% 0,100% 100%,60% 100%);
-            padding-right:70px;
-            text-align:right;
-            display:flex;
-            flex-direction:column;
-            justify-content:center;
-            align-items:flex-end;
-        }
-
-        .wel_text{
-            font-size:40px;
-            margin-top:-50px;
-            line-height:50px;
-        }
-
-        .sub_wel{
-            margin-top:10px;
-            font-size:18px;
-            line-height:24px;
-            letter-spacing:1px;
+        
+        .google-btn-container img {
+            height: 35px;
+            vertical-align: middle;
+            margin-right: 10px;
         }
     </style>
 </head>
 <body>
     <div class="wrapper">
+        <div class="banner">
+            <h1 class="regs_text">BIENVENIDO A RAPSODIA</h1>
+            <p class="sub_regs">Tu experiencia gastronómica de lujo te espera.</p>
+            <p class="sub_regs">Reserva fácil y rápido.</p>
+        </div>
         <form method="POST" class="form">
             {% csrf_token %}
-            <h1 class="title">Inicio</h1>
-            {{ form.email }}
-            {{ form.password }}
-            {% if form.errors %}
-                <div style="color: red; margin-top: 10px;">
-                    {% for field in form %}
-                        {% for error in field.errors %}
-                            <p>{{ error }}</p>
-                        {% endfor %}
+            <h1 class="title">Iniciar Sesión</h1>
+            
+            {{ form.as_p }}
+            
+            {% if form.non_field_errors %}
+                <div style="color: var(--color-resaltado); margin-top: 10px; font-weight: bold;">
+                    {% for error in form.non_field_errors %}
+                        <p>{{ error }}</p>
                     {% endfor %}
                 </div>
             {% endif %}
-            <button class="Submit" type="submit">Iniciar sesión</button>
+            
+            <button class="Submit" type="submit">Ingresar a Mi Cuenta</button>
+            
+            <div class="social-login-group">
+                <a class="links" href="{% url 'account_reset_password' %}">¿Olvidaste tu contraseña?</a>
+                
+                <a class="links" href="{% url 'register' %}">¿Aún no tienes cuenta? Regístrate</a>
+            </div>
+            
+            <div class="google-btn-container">
+                <a href="{% provider_login_url 'google' %}">
+                    <img src="{% static 'img/Gmail.png' %}" alt="Google Icon">
+                    Continuar con Google
+                </a>
+            </div>
         </form>
-        <div class="banner">
-            <h1 class="wel_text">BIENVENIDO DE VUELTA</h1>
-            <p class="sub_wel">¡Nos da gusto verte!</p>
-        </div>
     </div>
 </body>
 </html>

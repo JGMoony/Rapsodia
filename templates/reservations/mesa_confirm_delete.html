@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Eliminar Mesa</h2>
+<p>¿Seguro que quieres eliminar la mesa {{ object.numero }}?</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Eliminar</button>
+  <a href="{% url 'mesa_list' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

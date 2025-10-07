@@ -1,21 +1,44 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User
-import re
+from users.models import User
 
 class RegistroForm(UserCreationForm):
-    email = forms.EmailField(required=True)
-    nombre = forms.CharField(max_length=100)
-    apellido = forms.CharField(max_length=100)
-    password1 = forms.CharField(label='Contraseña', widget=forms.PasswordInput)
-    password2 = forms.CharField(label='Confirmar contraseña', widget=forms.PasswordInput)
+    password1 = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput(attrs={"class": "form-control"}),
+        help_text="",
+    )
+    password2 = forms.CharField(
+        label="Confirmar contraseña",
+        widget=forms.PasswordInput(attrs={"class": "form-control"}),
+        help_text="",
+    )
 
+    class Meta(UserCreationForm.Meta):
+        model = User
+        fields = ("nombre", "apellido", "email", "password1", "password2")
+        widgets = {
+            "nombre": forms.TextInput(attrs={"class": "form-control"}),
+            "apellido": forms.TextInput(attrs={"class": "form-control"}),
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+        }
+
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        label="Correo electrónico",
+        widget=forms.EmailInput(attrs={"class": "form-control"})
+    )
+    password = forms.CharField(
+        label="Contraseña",
+        widget=forms.PasswordInput(attrs={"class": "form-control"})
+    )
+
+class ProfileForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['email', 'nombre', 'apellido', 'password1', 'password2']
-
-    def clean_password1(self):
-        password = self.cleaned_data.get('password1')
-        if not re.search(r'[A-Za-z]', password) or not re.search(r'\d', password):
-            raise forms.ValidationError("La contraseña debe contener letras y números.")
-        return password
+        fields = ["nombre", "apellido", "email"]
+        widgets = {
+            "nombre": forms.TextInput(attrs={"class": "form-control"}),
+            "apellido": forms.TextInput(attrs={"class": "form-control"}),
+            "email": forms.EmailInput(attrs={"class": "form-control"}),
+        }

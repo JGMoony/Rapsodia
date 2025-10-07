@@ -1,0 +1,186 @@
+{%load static%}
+{% block content %}
+<style>
+    /* Estilos de Tabla de Rapsodia para esta vista CRUD */
+    :root {
+        --color-rapsodia-base: #3C1B43;
+        --color-fondo-limpio: #F7F4E9; 
+        --color-lujo-acento: #C79F5E;
+        --color-resaltado: #8B2C3F;     
+        --color-exito: #93A892;         
+    }
+
+    body { 
+        background-color: var(--color-fondo-limpio);
+        color: var(--color-texto-principal);
+        font-family: 'Playfair Display', serif;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+    }
+
+    header {
+        background-color: var(--color-rapsodia-base);
+        padding: 1rem 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    header img {
+        height: 50px;
+        object-fit: contain;
+    }
+        
+    .table-container {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    
+    /* Título */
+    .table-container h2 {
+        font-family: 'Cinzel', serif;
+        color: var(--color-rapsodia-base);
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    /* Tabla */
+    table { 
+        width: 100%; 
+        border-collapse: separate; 
+        border-spacing: 0;
+        margin-bottom: 20px; 
+        overflow: hidden;
+    }
+    th, td { padding: 12px; text-align: center; border-bottom: 1px solid var(--color-fondo-limpio); }
+    th { 
+        background: var(--color-rapsodia-base); 
+        color: var(--color-fondo-limpio);
+        font-family: 'Cinzel', serif;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+    tr:nth-child(even) { background-color: var(--color-fondo-limpio); }
+    
+    /* Botones y Enlaces */
+    .btn-primary {
+        display: inline-block;
+        background-color: var(--color-lujo-acento);
+        color: var(--color-rapsodia-base);
+        padding: 8px 15px;
+        border-radius: 5px;
+        font-family: 'Cinzel', serif;
+        font-weight: 700;
+        text-transform: uppercase;
+        text-decoration: none;
+        transition: background-color 0.2s ease;
+    }
+    .btn-primary:hover {
+        background-color: #B58F54;
+    }
+
+    .action-link { 
+        color: var(--color-rapsodia-base); 
+        font-weight: bold; 
+    }
+    .action-link.delete { 
+        color: var(--color-resaltado); 
+    }
+    
+    /* Colores para Disponibilidad */
+    .estado-true { 
+        color: var(--color-exito); 
+        font-weight: bold; 
+    }
+
+    .estado-false { 
+        color: var(--color-resaltado); 
+        font-weight: bold; 
+    }
+
+    .btn-dashboard {
+        background-color: var(--color-rapsodia-base);
+        color: var(--color-fondo-limpio);
+        border: 1px solid var(--color-rapsodia-base);
+        margin-right: 15px;
+    }
+    .btn-dashboard:hover {
+        background-color: var(--color-resaltado);
+        border-color: var(--color-resaltado);
+    }
+    
+    .nav-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn-plano {
+        background: none; 
+        border: 1px solid var(--color-rapsodia-base);
+        color: var(--color-rapsodia-base);
+    }
+    .btn-plano:hover {
+        background: var(--color-rapsodia-base);
+        color: var(--color-fondo-limpio);
+    }
+</style>
+    <header>
+        <a href="{% url 'base' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Rapsodia">
+        </a>
+    </header>
+<div class="table-container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2>GESTIÓN DE PROPIEDADES DE MESAS</h2>
+        <div class="nav-buttons">
+            <a href="{% url 'admin_dashboard' %}" class="btn-primary btn-dashboard">
+                &larr; Dashboard
+            </a>
+            <a href="{% url 'mesa_plano' %}" class="btn-primary btn-plano">
+                Ver Plano Operativo
+            </a>
+        </div>
+    </div>
+
+    <div style="text-align: left; margin-bottom: 20px;">
+        <a href="{% url 'mesa_create' %}" class="btn-primary">Crear Nueva Mesa</a>
+    </div>
+
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Número</th>
+                <th>Capacidad</th>
+                <th>Disponible</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for mesa in mesas %} <tr>
+                <td>{{ mesa.numero }}</td>
+                <td>{{ mesa.capacidad }}</td>
+                <td class="estado-{{ mesa.disponible|lower }}">
+                    {{ mesa.disponible|yesno:"Sí,No" }}
+                </td>
+                <td>
+                    <a href="{% url 'mesa_edit' mesa.id %}" class="action-link">Editar</a> |
+                    <a href="{% url 'mesa_delete' mesa.id %}" class="action-link delete">Eliminar</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No hay mesas registradas.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

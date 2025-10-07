@@ -1,0 +1,150 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-co">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapsodia - Reserva Confirmada</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Definición de la Paleta de Colores de Rapsodia */
+        :root {
+            --color-rapsodia-base: #3C1B43; /* Berenjena Profundo (Títulos, Texto) */
+            --color-lujo-acento: #C79F5E;  /* Oro Antiguo (Botones, Acentos) */
+            --color-fondo-limpio: #F7F4E9;  /* Crema de Vainilla (Fondo Principal) */
+            --color-texto-principal: #1A1A1A; 
+            --color-texto-secundario: #6C6C6C;
+            --color-resaltado: #8B2C3F;     /* Borgoña Rico (Valores de la reserva) */
+            --color-confirmacion: #93A892;  /* Salvia Suave (Fondo de Éxito) */
+        }
+
+        body {
+            background-color: var(--color-fondo-limpio);
+            color: var(--color-texto-principal);
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        /* ------------------ Tarjeta de Confirmación ------------------ */
+        .confirm-card {
+            /* Usamos Salvia Suave (color de éxito) como fondo principal */
+            background-color: var(--color-fondo-limpio);
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            border: 3px solid var(--color-lujo-acento); 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            max-width: 550px;
+            margin: 4rem auto;
+            color: var(--color-rapsodia-base); /* Texto oscuro sobre el fondo claro de éxito */
+        }
+
+        h2 {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+            color: var(--color-rapsodia-base);
+        }
+
+        .confirm-card p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        /* ------------------ Lista de Detalles ------------------ */
+        .confirm-card ul {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 2.5rem;
+            background-color: rgba(255, 255, 255, 0.7); /* Fondo semi-transparente para la lista */
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: left;
+        }
+
+        .confirm-card ul li {
+            font-size: 1.1rem;
+            padding: 0.4rem 0;
+        }
+
+        .confirm-card ul li b {
+            color: var(--color-rapsodia-base);
+            display: inline-block;
+            width: 130px;
+            font-weight: bold;
+        }
+
+        .confirm-card ul li span {
+            /* Usamos el Borgoña Rico para destacar los datos clave */
+            color: var(--color-resaltado); 
+            font-weight: 700;
+        }
+        
+        /* ------------------ Botones/Enlaces ------------------ */
+        .link-group {
+            margin-top: 1.5rem;
+        }
+        
+        .btn-link {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        /* Botón Principal (Ver historial) */
+        .btn-historial {
+            background-color: var(--color-lujo-acento); /* Oro Antiguo */
+            color: var(--color-rapsodia-base);
+            border: 2px solid var(--color-lujo-acento);
+        }
+
+        .btn-historial:hover {
+            background-color: #B58F54;
+            transform: translateY(-1px);
+        }
+
+        /* Botón Secundario (Hacer otra reserva) */
+        .btn-otra-reserva {
+            background-color: transparent;
+            color: var(--color-rapsodia-base);
+            border: 2px solid var(--color-rapsodia-base);
+        }
+        
+        .btn-otra-reserva:hover {
+            background-color: var(--color-rapsodia-base);
+            color: var(--color-fondo-limpio);
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="confirm-card">
+        <h2>¡Reserva Confirmada!</h2>
+        <p>¡Esperamos verte en Rapsodia! Los detalles de tu mesa son:</p>
+        
+        <ul>
+            <li><b>Cliente:</b> <span>{{ reserva.cliente.get_full_name }}</span></li>
+            <li><b>Mesa:</b> <span>{{ reserva.mesa.numero }}</span> (Capacidad: {{ reserva.mesa.capacidad }})</li>
+            <li><b>Fecha:</b> <span>{{ reserva.fecha }}</span></li>
+            <li><b>Hora:</b> <span>{{ reserva.hora }}</span></li>
+            <li><b>Personas:</b> <span>{{ reserva.personas }}</span></li>
+        </ul>
+        
+        <div class="link-group">
+            <a href="{% url 'perfil_usuario' %}" class="btn-link btn-historial">
+                Ver Mis Reservas
+            </a>
+            <a href="{% url 'crear_reserva' %}" class="btn-link btn-otra-reserva">
+                Hacer Otra Reserva
+            </a>
+        </div>
+    </div>
+</body>
+</html>

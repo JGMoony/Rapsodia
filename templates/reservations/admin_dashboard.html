@@ -1,0 +1,326 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapsodia - Panel de Administración</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Definición de la Paleta de Colores de Rapsodia */
+        :root {
+            --color-rapsodia-base: #3C1B43;
+            --color-lujo-acento: #C79F5E;
+            --color-fondo-limpio: #F7F4E9;
+            --color-texto-principal: #1A1A1A; 
+            --color-texto-secundario: #6C6C6C;
+            --color-resaltado: #8B2C3F;
+            --color-exito: #93A892;
+        }
+
+        /* Estilos generales */
+        * {
+            font-family: 'Playfair Display', serif;
+            box-sizing: border-box;
+            color: var(--color-texto-principal);
+        }
+
+        body { 
+            background-color: var(--color-fondo-limpio);
+            color: var(--color-texto-principal);
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        header {
+            background-color: var(--color-rapsodia-base);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header img {
+            height: 50px;
+            object-fit: contain;
+        }
+
+        /* Títulos */
+        h1, h2 { 
+            font-family: 'Cinzel', serif;
+            color: var(--color-rapsodia-base); 
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 { font-size: 2.5rem; }
+        h2 { font-size: 1.8rem; margin-top: 40px; }
+
+        /* Enlaces y Botones */
+        a { color: var(--color-rapsodia-base); text-decoration: none; font-weight: bold; transition: color 0.2s ease; }
+        a:hover { color: var(--color-resaltado); text-decoration: underline; }
+
+        .btn-primary {
+            display: inline-block;
+            background-color: var(--color-lujo-acento);
+            color: var(--color-rapsodia-base);
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            transition: background-color 0.2s ease;
+        }
+        .btn-primary:hover {
+            background-color: #B58F54;
+            color: var(--color-rapsodia-base);
+            text-decoration: none;
+        }
+
+        /* Contenedor principal */
+        .dashboard-container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+        
+        /* Contenedor de estadísticas */
+        .stats { 
+            display: flex; 
+            gap: 20px; 
+            justify-content: center;
+            margin-bottom: 40px; 
+        }
+        .stat-box { 
+            padding: 20px; 
+            background: #fff; 
+            border: 2px solid var(--color-rapsodia-base); 
+            border-radius: 8px; 
+            flex-basis: 30%;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .stat-box b {
+            display: block;
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: var(--color-lujo-acento);
+            margin-top: 5px;
+        }
+        
+        /* Filtros */
+        .filter-group { 
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px; 
+        }
+        .filter-group label, .filter-group select {
+            font-size: 1.1rem;
+            color: var(--color-rapsodia-base);
+        }
+        .filter-group select {
+            padding: 5px;
+            border: 1px solid var(--color-rapsodia-base);
+            border-radius: 4px;
+        }
+
+        /* Contenedor de gráficos */
+        .charts-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+        .chart-container { 
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        /* Tablas */
+        table { 
+            width: 100%; 
+            border-collapse: separate; 
+            border-spacing: 0;
+            margin-bottom: 40px; 
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        th, td { padding: 12px; text-align: center; border-bottom: 1px solid var(--color-fondo-limpio); }
+        th { 
+            background: var(--color-rapsodia-base); 
+            color: var(--color-fondo-limpio);
+            font-family: 'Cinzel', serif;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+        tr:nth-child(even) { background-color: var(--color-fondo-limpio); }
+        
+        /* Estilos de estado */
+        .estado-activa { color: var(--color-exito); font-weight: bold; }
+        .estado-cancelada { color: var(--color-resaltado); font-weight: bold; }
+        .estado-pasada { color: var(--color-texto-secundario); font-weight: bold; }
+
+    </style>
+</head>
+    <header>
+        <a href="{% url 'base' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Rapsodia">
+        </a>
+    </header>
+<body>
+    <div class="dashboard-container">
+        <h1>PANEL DE ADMINISTRACIÓN</h1>
+
+        <div style="text-align: right; margin-bottom: 20px;">
+            <a href="{% url 'login' %}">Cerrar Sesión</a>
+        </div>
+
+        <div class="stats">
+            <div class="stat-box">Reservas Activas: <b>{{ reservas_activas }}</b></div>
+            <div class="stat-box">Reservas Canceladas: <b>{{ reservas_canceladas }}</b></div>
+            <div class="stat-box">Reservas Pasadas: <b>{{ reservas_pasadas }}</b></div>
+        </div>
+
+        <form method="get" class="filter-group">
+            <div>
+                <label>Ver Gráfico por:</label>
+                <select name="filtro" onchange="this.form.submit()">
+                    <option value="semana" {% if filtro == 'semana' %}selected{% endif %}>Últimos 7 Días</option>
+                    <option value="mes" {% if filtro == 'mes' %}selected{% endif %}>Últimos 30 Días</option>
+                </select>
+            </div>
+            <div>
+                <label>Filtrar Reservas por Mes:</label>
+                <select name="mes" onchange="this.form.submit()">
+                    <option value="">Todos los meses</option>
+                    {% for mes_disp in meses_disponibles %}
+                        <option value="{{ mes_disp.mes }}" {% if mes_disp.mes == mes_seleccionado %}selected{% endif %}>
+                            {{ mes_disp.nombre }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+
+        <h2>ANÁLISIS DE TENDENCIAS</h2>
+        <div class="charts-section">
+            <div class="chart-container">
+                <canvas id="reservasChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <canvas id="diasSemanaChart"></canvas>
+            </div>
+        </div>
+
+        <h2>GESTIÓN DE MESAS</h2>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <a href="{% url 'mesa_plano' %}" class="btn-primary" style="margin-right: 15px;">Ver Plano de Planta (Operación)</a>
+            <a href="{% url 'mesa_list' %}" class="btn-primary">Ver/Editar Lista de Mesas</a>
+        </div>
+
+
+    <h2>LISTADO DE RESERVAS ({{ nombre_mes_seleccionado|upper }})</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Cliente</th>
+                    <th>Mesa</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                    <th>Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for reserva in reservas %}
+                <tr>
+                    <td>{{ reserva.cliente }}</td>
+                    <td>{{ reserva.mesa.numero }}</td>
+                    <td>{{ reserva.fecha }}</td>
+                    <td>{{ reserva.hora }}</td>
+                    <td class="estado-{{ reserva.estado|lower }}">{{ reserva.estado }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5">No hay reservas registradas.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const rapsodiaBase = '{{ "#3C1B43" }}'; 
+        const rapsodiaAcento = '{{ "#C79F5E" }}';
+        const rapsodiaExito = '{{ "#93A892" }}';
+
+        const ctxReservas = document.getElementById('reservasChart').getContext('2d');
+        new Chart(ctxReservas, {
+            type: 'line',
+            data: {
+                labels: JSON.parse('{{ labels|escapejs }}'),
+                datasets: [{
+                    label: 'Reservas Registradas',
+                    data: JSON.parse('{{ data|escapejs }}'),
+                    borderColor: rapsodiaBase,
+                    backgroundColor: rapsodiaBase + '33', 
+                    pointBackgroundColor: rapsodiaAcento,
+                    pointBorderColor: rapsodiaBase,
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                plugins: {
+                    title: { display: true, text: '{% if filtro == "semana" %}Reservas en los Últimos 7 Días{% else %}Reservas en los Últimos 30 Días{% endif %}', font: { family: 'Cinzel', size: 16 }, color: rapsodiaBase },
+                    legend: { display: false }
+                },
+                scales: { x: { grid: { display: false } }, y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+
+        const ctxDias = document.getElementById('diasSemanaChart').getContext('2d');
+        new Chart(ctxDias, {
+            type: 'bar',
+            data: {
+                labels: JSON.parse('{{ dias_labels|escapejs }}'),
+                datasets: [{
+                    label: 'Reservas por Día',
+                    data: JSON.parse('{{ dias_counts|escapejs }}'),
+                    backgroundColor: [rapsodiaBase, rapsodiaBase, rapsodiaBase, rapsodiaAcento, rapsodiaAcento, rapsodiaBase, rapsodiaBase], /* Resalta Jueves y Viernes */
+                    borderColor: rapsodiaBase,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                plugins: {
+                    title: { display: true, text: 'Reservas por Día de la Semana (Histórico)', font: { family: 'Cinzel', size: 16 }, color: rapsodiaBase },
+                    legend: { display: false }
+                },
+                scales: { x: { grid: { display: false } }, y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    </script>
+    
+    {% if mes_seleccionado %}
+        <script>
+            const MESES_ES = JSON.parse('{{ MESES_ES|escapejs }}'); 
+            const mesIndex = {{ mes_seleccionado }};
+            document.querySelector('h2:last-of-type').textContent = `LISTADO DE RESERVAS (${MESES_ES[mesIndex]})`;
+        </script>
+    {% endif %}
+
+    </body>
+</html>

@@ -18,10 +18,14 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True)
-    nombre = models.CharField(max_length=100)
-    apellido = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100, null=True, blank=True)
+    apellido = models.CharField(max_length=100, null=True, blank=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+    role = models.CharField(max_length=50, choices=[('cliente', 'Cliente'), ('admin', 'Administrador')],
+        default='cliente',
+        editable=True
+)
 
     objects = UserManager()
 
@@ -29,4 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS = ['nombre', 'apellido']
 
     def __str__(self):
+        return f"{self.nombre} {self.apellido}"
+    
+    def get_full_name(self):
         return f"{self.nombre} {self.apellido}"

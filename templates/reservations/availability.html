@@ -1,0 +1,281 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es-co">
+<head>
+    <meta charset="UTF-8">
+    <title>Rapsodia - Reservar</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Definición de la Paleta de Colores de Rapsodia */
+        :root {
+            --color-rapsodia-base: #3C1B43;
+            --color-lujo-acento: #C79F5E;
+            --color-fondo-limpio: #F7F4E9;
+            --color-texto-principal: #1A1A1A;
+            --color-texto-secundario: #6C6C6C;
+            --color-resaltado: #8B2C3F;
+            --color-confirmacion: #93A892;
+        }
+
+        body {
+            background-color: var(--color-fondo-limpio);
+            color: var(--color-texto-principal);
+            font-family: 'Playfair Display', serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        /* ------------------ Encabezado ------------------ */
+        header {
+            background-color: var(--color-rapsodia-base);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        header img {
+            height: 50px;
+            object-fit: contain;
+        }
+        
+        /* ------------------ Títulos y Contenedores ------------------ */
+        h1, h2 {
+            font-family: 'Cinzel', serif;
+            color: var(--color-rapsodia-base);
+            margin-top: 2rem;
+        }
+        
+        /* Contenedor del Formulario de Consulta */
+        form {
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin: 2rem auto;
+            max-width: 500px;
+        }
+        
+        /* ------------------ Elementos de Formulario ------------------ */
+        input, select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin: 0.5rem 0 1rem 0;
+            border: 1px solid var(--color-texto-secundario);
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input[type="date"], select {
+            background-color: var(--color-fondo-limpio);
+            border-color: var(--color-rapsodia-base);
+        }
+
+        label {
+            display: block;
+            text-align: left;
+            margin-top: 1rem;
+            font-weight: bold;
+            color: var(--color-rapsodia-base);
+        }
+
+        /* ------------------ Botones ------------------ */
+        .btn-accion {
+            background-color: var(--color-lujo-acento);
+            color: var(--color-rapsodia-base);
+            border: none;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            padding: 12px 25px;
+            border-radius: 6px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .btn-accion:hover {
+            background-color: var(--color-resaltado);
+            color: var(--color-fondo-limpio);
+        }
+
+        /* ------------------ Mapa de Mesas ------------------ */
+        .mapa-mesas {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 2rem;
+            justify-items: center;
+            margin: 2rem auto;
+            max-width: 900px;
+            padding: 2rem;
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .mesa-circulo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            line-height: 1;
+        }
+
+        .mesa-numero {
+            font-weight: bold;
+            font-family: 'Cinzel', serif;
+            line-height: 1.2;
+        }
+
+        /* Estados de las Mesas */
+        .mesa-disponible {
+            background-color: var(--color-confirmacion); 
+            border: 3px solid var(--color-rapsodia-base);
+            color: var(--color-rapsodia-base);
+        }
+        
+        .mesa-disponible:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 15px var(--color-lujo-acento);
+        }
+
+        .mesa-ocupada {
+            background-color: #F8D7DA;
+            border: 3px solid var(--color-resaltado);
+            color: var(--color-resaltado);
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        
+        .mesa-seleccionada {
+            border: 4px solid var(--color-lujo-acento) !important; 
+            box-shadow: 0 0 20px var(--color-lujo-acento);
+        }
+        
+        /* Estilo para el formulario de selección de mesa (aparece al seleccionar) */
+        #form-seleccion-mesa {
+            margin: 2rem auto;
+            max-width: 500px;
+            padding: 1.5rem;
+            background: var(--color-fondo-limpio);
+            border: 1px dashed var(--color-lujo-acento);
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* Mensaje de confirmación */
+        .alert-success {
+            background-color: var(--color-confirmacion);
+            color: var(--color-rapsodia-base);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 2rem;
+            font-weight: bold;
+        }
+
+        /* Estilo para los tags <p> generados por form.as_p */
+        form p {
+            margin: 10px 0;
+            text-align: left;
+        }
+        
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="{% url 'home' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Rapsodia">
+        </a>
+    </header>
+
+    <h1>Consultar Disponibilidad</h1>
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        
+        <button type="submit" name="consultar" value="1" class="btn-accion">
+            Consultar Disponibilidad
+        </button>
+    </form>
+
+    {% if mesas_disponibles and todas_mesas %}
+        <h2>Selecciona tu Mesa</h2>
+        <p>Mostrando disponibilidad para {{ personas }} personas el {{ fecha }} a las {{ hora }}.</p>
+        
+        <div id="mapa-mesas" class="mapa-mesas">
+            {% for mesa in todas_mesas %}
+                {% if mesa.id in ids_mesas_disponibles %}
+                    <div class="mesa-circulo mesa-disponible" 
+                        data-mesa-id="{{ mesa.id }}" 
+                        data-mesa-numero="{{ mesa.numero }}" 
+                        data-mesa-capacidad="{{ mesa.capacidad }}" 
+                        title="Mesa {{ mesa.numero }} ({{ mesa.capacidad }} pers.)">
+                        <span class="mesa-numero">Mesa {{ mesa.numero }}</span>
+                    </div>
+                {% else %}
+                    <div class="mesa-circulo mesa-ocupada" 
+                        title="Mesa ocupada">
+                        <span class="mesa-numero">Mesa {{ mesa.numero }}</span>
+                        <small>Ocupada</small>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        
+        <form id="form-seleccion-mesa" method="post" style="display:none;">
+            {% csrf_token %}
+            <input type="hidden" name="fecha" value="{{ fecha }}">
+            <input type="hidden" name="hora" value="{{ hora }}">
+            <input type="hidden" name="personas" value="{{ personas }}">
+            <input type="hidden" name="mesa_id" id="input-mesa-id">
+            
+            <p>Has seleccionado la mesa. Presiona "Confirmar Reserva" para continuar.</p>
+            <button type="submit" name="reservar" value="1" class="btn-accion">
+                Confirmar Reserva
+            </button>
+        </form>
+        
+        <script>
+        document.querySelectorAll('.mesa-disponible').forEach(function(el) {
+            el.addEventListener('click', function() {
+                // 1. Quitar la selección de todas las mesas
+                document.querySelectorAll('.mesa-circulo').forEach(function(m) { m.classList.remove('mesa-seleccionada'); });
+                
+                // 2. Marcar la mesa seleccionada
+                el.classList.add('mesa-seleccionada');
+                
+                // 3. Pasar el ID al formulario oculto
+                document.getElementById('input-mesa-id').value = el.dataset.mesaId;
+                
+                // 4. Mostrar el botón de reserva
+                document.getElementById('form-seleccion-mesa').style.display = 'block';
+                
+                // (Opcional) Desplazarse al formulario de reserva
+                document.getElementById('form-seleccion-mesa').scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+        </script>
+        
+    {% elif form.is_bound and not mesas_disponibles %}
+        <p class="alert-success" style="background-color: var(--color-resaltado); color: white;">
+            Lamentablemente, no encontramos mesas disponibles para los criterios seleccionados. Intenta cambiar la hora o la fecha.
+        </p>
+    {% endif %}
+
+
+</body>
+</html>
