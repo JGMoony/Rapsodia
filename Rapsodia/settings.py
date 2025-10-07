@@ -69,8 +69,7 @@ WSGI_APPLICATION = 'Rapsodia.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        # Usa la URL de la base de datos de Heroku si existe, si no, usa SQLite
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        # Ya no necesitas el default a SQLite si siempre vas a usar Postgres
         conn_max_age=600,
         conn_health_checks=True,
     )
@@ -113,6 +112,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 # Configuración de Google OAuth2
 SOCIALACCOUNT_PROVIDERS = {
