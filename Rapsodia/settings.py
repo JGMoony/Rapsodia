@@ -10,7 +10,12 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
 
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '.herokuapp.com',  # Buena práctica tenerlo como comodín
+    'rapsodia-app-8059124ac65a.herokuapp.com',
+]
 
 AUTH_USER_MODEL = 'users.User'
 
