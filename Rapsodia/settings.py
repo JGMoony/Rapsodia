@@ -13,8 +13,6 @@ DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 ALLOWED_HOSTS = [
     '127.0.0.1',
     'localhost',
-    '.herokuapp.com',  # Buena práctica tenerlo como comodín
-    'rapsodia-app-8059124ac65a.herokuapp.com',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -69,7 +67,6 @@ WSGI_APPLICATION = 'Rapsodia.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        # Ya no necesitas el default a SQLite si siempre vas a usar Postgres
         conn_max_age=600,
         conn_health_checks=True,
     )
