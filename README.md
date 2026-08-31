@@ -1,8 +1,5 @@
 # 🎭 Rapsodia
 
-<p align="center">
-  <img src="https://raw.githubusercontent.com/JGMoony/Rapsodia/main/assets/banner.png" alt="Rapsodia Banner" width="100%" error="this.style.display='none'">
-</p>
 
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Django](https://img.shields.io/badge/Django-Framework-092E20?style=for-the-badge&logo=django&logoColor=white)
